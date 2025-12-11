@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Visualizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <h1>Algorithm Visualizer</h1>
+                <p>Interactive Dynamic Programming Visualization</p>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle" id="theme-btn">
+                    <span class="dot"></span> Light Mode
+                </button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" data-algo="knapsack">Knapsack 0/1</button>
+            <button class="tab-btn" data-algo="lcs">LCS</button>
+        </div>
+
+        <!-- Configuration Card -->
+        <section class="card config-card">
+            <div class="card-header-row">
+                <h3 class="card-title">Configuration</h3>
+                <button id="random-btn" class="sm-btn">🎲 Random Data</button>
+            </div>
+
+            <div class="config-content" id="knapsack-config">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Capacity (W)</label>
+                        <input type="number" id="capacity-input" value="10" min="5" max="20">
+                    </div>
+                    <div class="input-group">
+                        <label>Number of Items (8-12)</label>
+                        <input type="number" id="item-count-input" value="8" min="8" max="12">
+                    </div>
+                    <button id="start-btn" class="primary-btn large">Start / Restart</button>
+                </div>
+                <div class="items-preview" id="items-preview">
+                    <!-- Javascript will populate items here like tags -->
+                </div>
+            </div>
+
+            <div class="config-content hidden" id="lcs-config">
+                <div class="input-row">
+                    <div class="input-group full-width">
+                        <label>String X</label>
+                        <input type="text" id="str-a-input" value="ABCBDAB">
+                    </div>
+                    <div class="input-group full-width">
+                        <label>String Y</label>
+                        <input type="text" id="str-b-input" value="BDCABA">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Workspace (Controls + Grid) -->
+        <div class="workspace-grid">
+
+            <!-- Left Column: Controls & Status -->
+            <div class="left-col">
+                <!-- Controls Card -->
+                <section class="card controls-card">
+                    <h3 class="card-title">Controls</h3>
+                    <div class="controls-grid">
+                        <button id="play-btn" class="control-btn success">Play</button>
+                        <button id="pause-btn" class="control-btn warning">Pause</button>
+                        <button id="prev-step-btn" class="control-btn secondary">◄ Step Back</button>
+                        <button id="next-step-btn" class="control-btn secondary">Step Next ►</button>
+                    </div>
+
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Animation Speed</span>
+                            <span id="speed-label">200ms</span>
+                        </div>
+                        <input type="range" id="speed-range" min="1" max="1000" value="200" class="styled-slider">
+                    </div>
+
+                    <div class="mode-toggle-group">
+                        <label>Mode:</label>
+                        <div class="toggle-pill">
+                            <button class="pill-btn active" data-mode="visualize">Recording</button>
+                            <button class="pill-btn" data-mode="monk">Monk Mode</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Status/Console Card -->
+                <section class="card status-card">
+                    <h3 class="card-title">Status / Explanation</h3>
+                    <div id="status-text" class="status-content typing-effect">
+                        Initialized. Press Play or Step to begin.
+                    </div>
+                </section>
+
+                <!-- Legend Card -->
+                <section class="card legend-card">
+                    <h3 class="card-title">Legend</h3>
+                    <ul class="legend-list">
+                        <li><span class="dot target"></span> Current Cell</li>
+                        <li><span class="dot highlight"></span> Comparison Source</li>
+                        <li><span class="dot match"></span> Match (LCS) / Include (Knapsack)</li>
+                    </ul>
+                </section>
+            </div>
+
+            <!-- Right Column: Visualization Grid -->
+            <div class="right-col">
+                <section class="card viz-card">
+                    <div class="card-header-row">
+                        <h3 class="card-title" id="grid-title">Knapsack Table</h3>
+                        <div class="labels">
+                            <span class="badge">Cells: <span id="cell-count">0</span></span>
+                        </div>
+                    </div>
+                    <div class="grid-scroll-container">
+                        <div id="grid-container" class="viz-grid"></div>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+
+        <!-- Footer / Shortcuts -->
+        <section class="card shortcuts-card">
+            <h3 class="card-title">⌨ Keyboard Shortcuts</h3>
+            <div class="shortcuts-list">
+                <span class="key-tag">Space</span> Play/Pause
+                <span class="key-tag">→</span> Step Next
+                <span class="key-tag">←</span> Step Back
+                <span class="key-tag">R</span> Restart
+            </div>
+        </section>
+    </div>
+
+    <script src="algorithms.js"></script>
+    <script src="visualization.js"></script>
+    <script src="monk_mode.js"></script>
+    <script src="js.js"></script>
+</body>
+
+</html>
