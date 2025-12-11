@@ -228,6 +228,11 @@ input[type=number] {
     color: var(--text-main);
 }
 
+/* Config Actions (Start Button) */
+.config-actions {
+    margin-top: 1rem;
+}
+
 /* Items Preview (Tags) */
 .items-preview {
     display: flex;
