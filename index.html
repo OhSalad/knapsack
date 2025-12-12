@@ -30,6 +30,7 @@
         <div class="nav-tabs">
             <button class="tab-btn active" data-algo="knapsack">Knapsack 0/1</button>
             <button class="tab-btn" data-algo="lcs">LCS</button>
+            <button class="tab-btn" data-algo="heap">Heap</button>
         </div>
 
         <!-- Configuration Card -->
@@ -64,6 +65,56 @@
                     <div class="input-group full-width">
                         <label>String Y</label>
                         <input type="text" id="str-b-input" value="BDCABA">
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-content hidden" id="heap-config">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Array Size (5-15)</label>
+                        <input type="number" id="heap-size-input" value="10" min="5" max="15">
+                    </div>
+                    <div class="input-group">
+                        <label>Max Value</label>
+                        <input type="number" id="heap-max-value" value="50" min="10" max="100">
+                    </div>
+                </div>
+                <!-- Custom Build Toggle -->
+                <div style="margin-top: 1rem;">
+                    <button id="custom-heap-btn" class="sm-btn"
+                        style="width: 100%; border-color: var(--primary); color: var(--primary);">✏️ Custom Build
+                        Mode</button>
+                    <div id="builder-controls" class="hidden" style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
+                        <input type="number" id="new-node-val" placeholder="Value"
+                            style="width: 80px; padding: 0.4rem;">
+                        <button id="add-node-btn" class="sm-btn success">+ Add Node</button>
+                        <button id="clear-heap-btn" class="sm-btn danger">Clear</button>
+                    </div>
+                    <p id="builder-instructions" class="hidden"
+                        style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
+                        Click a ghost node (+) to add a child. Click any node to edit value.
+                    </p>
+                </div>
+                <div class="heap-array-preview" id="heap-array-preview">
+                    <!-- Javascript will populate the array here -->
+                </div>
+                <div class="heap-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Heapify Calls:</span>
+                        <span class="stat-value" id="heapify-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Swaps Made:</span>
+                        <span class="stat-value" id="swap-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Recursive Calls:</span>
+                        <span class="stat-value" id="recursive-count">0</span>
+                    </div>
+                    <div class="stat-item monk-only hidden" id="monk-progress-container">
+                        <span class="stat-label">Progress:</span>
+                        <span class="stat-value" id="monk-progress">0 / 0</span>
                     </div>
                 </div>
             </div>
@@ -132,12 +183,15 @@
                 <!-- Legend Card -->
                 <section class="card legend-card">
                     <h3 class="card-title">Legend</h3>
-                    <ul class="legend-list">
+                    <ul class="legend-list" id="legend-list">
                         <li><span class="dot target"></span> Current Cell</li>
                         <li><span class="dot highlight"></span> Comparison Source</li>
                         <li><span class="dot match"></span> Match (LCS) / Include (Knapsack)</li>
                         <li><span class="dot traceback"></span> Traceback Current</li>
                         <li><span class="dot traceback-path"></span> Traceback Path</li>
+                        <li class="heap-legend hidden"><span class="dot heap-compare"></span> Comparing Nodes</li>
+                        <li class="heap-legend hidden"><span class="dot heap-swap"></span> Swap Operation</li>
+                        <li class="heap-legend hidden"><span class="dot heap-correct"></span> Correct (Monk Mode)</li>
                     </ul>
                 </section>
             </div>
@@ -175,6 +229,7 @@
     <script src="visualization.js"></script>
     <script src="traceback.js"></script>
     <script src="monk_mode.js"></script>
+    <script src="heap.js"></script>
     <script src="js.js"></script>
 </body>
 

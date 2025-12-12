@@ -187,11 +187,13 @@ body {
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
+    appearance: none;
     margin: 0;
 }
 
 input[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
     /* Firefox */
 }
 
@@ -752,4 +754,508 @@ input[type=number] {
     font-size: 0.85rem;
     color: #8b5cf6;
     text-align: center;
+}
+
+/* ===============================================
+   HEAP VISUALIZATION STYLES
+   =============================================== */
+
+/* Heap Config Preview */
+.heap-array-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.heap-array-tag {
+    background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: white;
+    font-family: monospace;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.heap-array-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+/* Heap Stats Display */
+.heap-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border-radius: 10px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    flex: 1;
+    min-width: 120px;
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.stat-value {
+    color: var(--success);
+    font-weight: 700;
+    font-size: 1.1rem;
+    font-family: monospace;
+}
+
+/* Heap Container Layout */
+.heap-tree-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);
+    border-radius: 12px;
+    position: relative;
+    min-height: 300px;
+    overflow-x: auto;
+    /* Allow scrolling for wide trees */
+}
+
+/* Recursive Tree Structure */
+.tree-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 0 0.25rem;
+    /* Compact padding for leaf alignment */
+}
+
+.tree-children {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 1.5rem;
+    position: relative;
+    /* Removed gap to allow connector lines to touch */
+}
+
+/* --- Tree Connectors --- */
+
+/* Vertical line from Parent Node DOWN */
+.tree-children::before {
+    content: '';
+    position: absolute;
+    top: -1.5rem;
+    left: 50%;
+    width: 3px;
+    height: 0.75rem;
+    /* Connects Parent to Mid-Gap */
+    background: #cbd5e1;
+    /* Slate 300 - Brighter */
+    transform: translateX(-50%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Vertical line from Child Node UP */
+.tree-children>.tree-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -0.75rem;
+    left: 50%;
+    width: 3px;
+    height: 0.75rem;
+    /* Connects Mid-Gap to Child */
+    background: #cbd5e1;
+    transform: translateX(-50%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Horizontal line across children */
+.tree-children>.tree-wrapper::after {
+    content: '';
+    position: absolute;
+    top: -0.75rem;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #cbd5e1;
+    z-index: 0;
+    pointer-events: none;
+    transform: translateY(-50%);
+    /* Center align thickness */
+}
+
+/* Fix Horizontal Line for First Child (starts at center) */
+.tree-children>.tree-wrapper:first-child::after {
+    left: 50%;
+    width: 50%;
+}
+
+/* Fix Horizontal Line for Last Child (ends at center) */
+.tree-children>.tree-wrapper:last-child::after {
+    width: 50%;
+}
+
+/* Fix Horizontal Line for First & Last (Single Child) - Remove it */
+.tree-children>.tree-wrapper:only-child::after {
+    display: none;
+}
+
+/* Ensure nodes are above lines */
+.heap-node {
+    z-index: 2;
+    background: var(--bg-card);
+    /* Ensure background covers lines if needed */
+}
+
+/* Remove old level-based styles */
+
+.heap-node {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #334155, #1e293b);
+    border: 3px solid var(--primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.heap-node .node-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.heap-node .node-index {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    position: absolute;
+    bottom: -18px;
+    background: var(--bg-card);
+    padding: 1px 4px;
+    border-radius: 4px;
+}
+
+/* Heap Node States */
+.heap-node.highlight-current {
+    background: linear-gradient(145deg, #f59e0b, #d97706) !important;
+    border-color: #fbbf24 !important;
+    transform: scale(1.15);
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.5);
+    animation: pulse-node 1s infinite;
+}
+
+@keyframes pulse-node {
+
+    0%,
+    100% {
+        transform: scale(1.15);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.heap-node.highlight-compare {
+    background: linear-gradient(145deg, #6366f1, #4f46e5) !important;
+    border-color: #818cf8 !important;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+}
+
+.heap-node.highlight-swap {
+    background: linear-gradient(145deg, #ec4899, #db2777) !important;
+    border-color: #f472b6 !important;
+    animation: swap-pulse 0.5s ease-in-out;
+    box-shadow: 0 0 25px rgba(236, 72, 153, 0.6);
+}
+
+@keyframes swap-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(1.2) rotate(-5deg);
+    }
+
+    75% {
+        transform: scale(1.2) rotate(5deg);
+    }
+}
+
+.heap-node.highlight-correct {
+    background: linear-gradient(145deg, #10b981, #059669) !important;
+    border-color: #34d399 !important;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+.heap-node.highlight-incorrect {
+    background: linear-gradient(145deg, #ef4444, #dc2626) !important;
+    border-color: #f87171 !important;
+    animation: shake 0.5s ease;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+}
+
+/* Monk Mode Clickable Nodes */
+.heap-node.monk-clickable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.heap-node.monk-clickable:hover {
+    transform: scale(1.1);
+    border-color: #8b5cf6;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+}
+
+/* Heap Builder Mode Styles */
+.heap-node.ghost {
+    background: transparent;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    box-shadow: none;
+    transition: all 0.2s;
+}
+
+.heap-node.ghost:hover {
+    border-color: var(--success);
+    color: var(--success);
+    transform: scale(1.1);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.heap-node .node-input {
+    width: 40px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    border-bottom: 2px solid transparent;
+}
+
+.heap-node .node-input:focus {
+    outline: none;
+    border-bottom-color: var(--primary);
+}
+
+/* Array Visualization */
+.heap-array-container {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.array-label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.array-cells {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.array-cell {
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(145deg, #334155, #1e293b);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.array-cell .cell-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.array-cell .cell-index {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    position: absolute;
+    bottom: 2px;
+}
+
+/* Array Cell States */
+.array-cell.highlight-current {
+    background: linear-gradient(145deg, #f59e0b, #d97706) !important;
+    border-color: #fbbf24 !important;
+    transform: scale(1.1);
+    z-index: 5;
+}
+
+.array-cell.highlight-compare {
+    background: linear-gradient(145deg, #6366f1, #4f46e5) !important;
+    border-color: #818cf8 !important;
+}
+
+.array-cell.highlight-swap {
+    background: linear-gradient(145deg, #ec4899, #db2777) !important;
+    border-color: #f472b6 !important;
+    animation: swap-pulse 0.5s ease-in-out;
+}
+
+.array-cell.highlight-correct {
+    background: linear-gradient(145deg, #10b981, #059669) !important;
+    border-color: #34d399 !important;
+}
+
+.array-cell.highlight-incorrect {
+    background: linear-gradient(145deg, #ef4444, #dc2626) !important;
+    border-color: #f87171 !important;
+    animation: shake 0.5s ease;
+}
+
+.array-cell.monk-clickable {
+    cursor: pointer;
+}
+
+.array-cell.monk-clickable:hover {
+    transform: scale(1.1);
+    border-color: #8b5cf6;
+    z-index: 5;
+}
+
+/* Heap Legend Items */
+.dot.heap-compare {
+    background: linear-gradient(145deg, #6366f1, #4f46e5);
+    border: 1px solid #818cf8;
+}
+
+.dot.heap-swap {
+    background: linear-gradient(145deg, #ec4899, #db2777);
+    border: 1px solid #f472b6;
+}
+
+.dot.heap-correct {
+    background: linear-gradient(145deg, #10b981, #059669);
+    border: 1px solid #34d399;
+}
+
+/* Heap Trace Log */
+.heap-trace-log {
+    max-height: 250px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.8rem;
+}
+
+.trace-entry {
+    padding: 0.4rem 0.6rem;
+    margin-bottom: 0.3rem;
+    border-radius: 4px;
+    border-left: 3px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.02);
+    animation: fadeInUp 0.3s ease;
+}
+
+.trace-entry.loop {
+    border-left-color: var(--primary);
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.trace-entry.swap {
+    border-left-color: #ec4899;
+    background: rgba(236, 72, 153, 0.1);
+}
+
+.trace-entry.recurse {
+    border-left-color: #f59e0b;
+    margin-left: 1rem;
+}
+
+.trace-entry.complete {
+    border-left-color: var(--success);
+    background: rgba(16, 185, 129, 0.15);
+}
+
+/* Responsive Adjustments for Heap */
+@media (max-width: 768px) {
+    .heap-node {
+        width: 48px;
+        height: 48px;
+    }
+
+    .heap-node .node-value {
+        font-size: 1rem;
+    }
+
+    .heap-level[data-level="1"] {
+        gap: 3rem;
+    }
+
+    .heap-level[data-level="2"] {
+        gap: 1rem;
+    }
+
+    .array-cell {
+        width: 45px;
+        height: 45px;
+    }
+
+    .heap-stats {
+        flex-direction: column;
+    }
+
+    .stat-item {
+        min-width: auto;
+    }
+}
+
+/* Heap-specific viz-card adjustments */
+.viz-card.heap-mode .grid-scroll-container {
+    max-height: none;
+    overflow: visible;
+}
+
+.viz-card.heap-mode .viz-grid {
+    display: block;
+    background: transparent;
+    border: none;
 }
