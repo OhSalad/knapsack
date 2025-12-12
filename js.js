@@ -3,12 +3,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const state = {
         algo: 'knapsack', // 'knapsack' | 'lcs'
         mode: 'visualize', // 'visualize' | 'monk'
-        data: null
+        data: null,
+        lastSolvedDp: null,
+        lastAlgoData: null,
+        isSimulationComplete: false
     };
 
     // --- Components ---
     const visualizer = new Visualizer('grid-container', 'status-text');
     const monkMode = new MonkMode(visualizer);
+    const tracebackManager = new TracebackManager(visualizer);
 
     // --- DOM Elements ---
     const els = {
@@ -31,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pauseBtn: document.getElementById('pause-btn'),
         nextBtn: document.getElementById('next-step-btn'),
         prevBtn: document.getElementById('prev-step-btn'),
+        tracebackBtn: document.getElementById('traceback-btn'),
         speedRange: document.getElementById('speed-range'),
         speedLabel: document.getElementById('speed-label'),
 
@@ -72,6 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // For smoother UX, let's regen data on switch if null, or just keep what's in inputs
             // We'll leave inputs as is.
             state.data = null; // Clear cached data to force re-read from inputs
+            state.lastSolvedDp = null;
+            state.lastAlgoData = null;
+            state.isSimulationComplete = false;
+            els.tracebackBtn.disabled = true;
+            tracebackManager.stopTraceback();
             visualizer.resetVisuals();
             visualizer.container.innerHTML = '';
         });
@@ -82,6 +92,11 @@ document.addEventListener('DOMContentLoaded', () => {
         populateRandomData();
         renderItemsPreview();
         // Optional: Auto-start? No, user asked to stop auto-starting.
+        state.lastSolvedDp = null;
+        state.lastAlgoData = null;
+        state.isSimulationComplete = false;
+        els.tracebackBtn.disabled = true;
+        tracebackManager.stopTraceback();
         visualizer.resetVisuals();
         visualizer.container.innerHTML = '';
         state.data = null; // Force refresh
@@ -119,10 +134,33 @@ document.addEventListener('DOMContentLoaded', () => {
     els.nextBtn.addEventListener('click', () => visualizer.next());
     els.prevBtn.addEventListener('click', () => visualizer.prev());
 
+    // Traceback Button
+    els.tracebackBtn.addEventListener('click', () => {
+        if (!state.lastSolvedDp || !state.lastAlgoData) {
+            document.getElementById('status-text').textContent = 'Please complete the simulation first before tracing back.';
+            return;
+        }
+
+        // Stop any ongoing traceback
+        tracebackManager.stopTraceback();
+
+        // Initialize traceback with the solved DP table
+        tracebackManager.init(
+            state.algo,
+            state.lastSolvedDp,
+            state.lastAlgoData,
+            state.mode === 'monk'
+        );
+
+        // Start traceback
+        tracebackManager.startTraceback();
+    });
+
     els.speedRange.addEventListener('input', (e) => {
         const val = parseInt(e.target.value);
         els.speedLabel.textContent = `${val}ms`;
         visualizer.setSpeed(val);
+        tracebackManager.setSpeed(val);
     });
 
     // Keyboard Shortcuts
@@ -212,9 +250,33 @@ document.addEventListener('DOMContentLoaded', () => {
     function runSimulation() {
         const inputData = getDataFromInputs();
 
+        // Reset traceback state
+        state.isSimulationComplete = false;
+        state.lastSolvedDp = null;
+        state.lastAlgoData = null;
+        els.tracebackBtn.disabled = true;
+        tracebackManager.stopTraceback();
+
         if (state.mode === 'monk') {
+            // In monk mode, solve first to get DP table for traceback
+            let solver;
+            if (state.algo === 'knapsack') {
+                solver = new KnapsackSolver(inputData.capacity, inputData.weights, inputData.values);
+            } else {
+                solver = new LCSSolver(inputData.s1, inputData.s2);
+            }
+            const result = solver.solve();
+            state.lastSolvedDp = result.dp;
+            state.lastAlgoData = inputData;
+
             monkMode.startLevel(state.algo, inputData);
             document.getElementById('status-text').textContent = "In Monk Mode. Click a cell and type the correct value.";
+
+            // Enable traceback button after a short delay to let monk mode initialize
+            setTimeout(() => {
+                els.tracebackBtn.disabled = false;
+                state.isSimulationComplete = true;
+            }, 500);
         } else {
             startVisualization(state.algo, inputData);
         }
@@ -236,6 +298,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const result = solver.solve();
 
+        // Store the DP table for traceback
+        state.lastSolvedDp = result.dp;
+        state.lastAlgoData = data;
+
         // Render
         visualizer.renderGrid(
             rowHeaders.length,
@@ -248,7 +314,11 @@ document.addEventListener('DOMContentLoaded', () => {
         els.cellCountLabel.textContent = (rowHeaders.length * colHeaders.length);
 
         visualizer.loadSteps(result.steps);
-        // visualizer.play(); // User requested manual start, so we wait. 
-        document.getElementById('status-text').textContent = "Ready. Press Play.";
+
+        // Enable traceback button
+        els.tracebackBtn.disabled = false;
+        state.isSimulationComplete = true;
+
+        document.getElementById('status-text').textContent = "Ready. Press Play or use Traceback after completing.";
     }
 });

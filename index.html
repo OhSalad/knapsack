@@ -87,6 +87,7 @@
                         <button id="prev-step-btn" class="control-btn secondary">◄ Step Back</button>
                         <button id="next-step-btn" class="control-btn secondary">Step Next ►</button>
                     </div>
+                    <button id="traceback-btn" class="control-btn traceback-btn" disabled>🔍 Traceback Items</button>
 
                     <div class="slider-group">
                         <div class="slider-label">
@@ -113,6 +114,21 @@
                     </div>
                 </section>
 
+                <!-- Traceback Log Card -->
+                <section class="card traceback-card hidden" id="traceback-card">
+                    <div class="card-header-row">
+                        <h3 class="card-title">🔍 Traceback Log</h3>
+                        <button id="close-traceback-btn" class="sm-btn">✕ Close</button>
+                    </div>
+                    <div id="traceback-log" class="traceback-log">
+                        <!-- Traceback logs will appear here -->
+                    </div>
+                    <div class="traceback-result hidden" id="traceback-result">
+                        <span class="result-label">Selected Items:</span>
+                        <span id="selected-items" class="result-value"></span>
+                    </div>
+                </section>
+
                 <!-- Legend Card -->
                 <section class="card legend-card">
                     <h3 class="card-title">Legend</h3>
@@ -120,6 +136,8 @@
                         <li><span class="dot target"></span> Current Cell</li>
                         <li><span class="dot highlight"></span> Comparison Source</li>
                         <li><span class="dot match"></span> Match (LCS) / Include (Knapsack)</li>
+                        <li><span class="dot traceback"></span> Traceback Current</li>
+                        <li><span class="dot traceback-path"></span> Traceback Path</li>
                     </ul>
                 </section>
             </div>
@@ -155,6 +173,7 @@
 
     <script src="algorithms.js"></script>
     <script src="visualization.js"></script>
+    <script src="traceback.js"></script>
     <script src="monk_mode.js"></script>
     <script src="js.js"></script>
 </body>
