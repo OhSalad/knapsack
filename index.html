@@ -80,6 +80,19 @@
                         <input type="number" id="heap-max-value" value="50" min="10" max="100">
                     </div>
                 </div>
+                <!-- Operation Selection -->
+                <div style="margin-top: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Heap Operation:</label>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button class="heap-op-btn active" data-operation="build">🏗️ Build Heap</button>
+                        <button class="heap-op-btn" data-operation="extract">⬆️ Extract Max</button>
+                        <button class="heap-op-btn" data-operation="insert">⬇️ Insert Element</button>
+                    </div>
+                    <div id="insert-value-container" class="hidden" style="margin-top: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
+                        <label style="font-size: 0.9rem;">Value to insert:</label>
+                        <input type="number" id="insert-value-input" value="25" min="1" max="100" style="width: 80px; padding: 0.4rem;">
+                    </div>
+                </div>
                 <!-- Custom Build Toggle -->
                 <div style="margin-top: 1rem;">
                     <button id="custom-heap-btn" class="sm-btn"
@@ -225,12 +238,7 @@
         </section>
     </div>
 
-    <script src="algorithms.js"></script>
-    <script src="visualization.js"></script>
-    <script src="traceback.js"></script>
-    <script src="monk_mode.js"></script>
-    <script src="heap.js"></script>
-    <script src="js.js"></script>
+    <script type="module" src="./app/main.js"></script>
 </body>
 
 </html>

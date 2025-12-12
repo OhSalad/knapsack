@@ -1,34 +1,24 @@
-class Visualizer {
+export class Visualizer {
     constructor(gridContainerId, explanationPanelId) {
         this.container = document.getElementById(gridContainerId);
         this.explanationContent = document.getElementById(explanationPanelId);
-        this.cells = []; // 2D array of cell elements
+        this.cells = [];
         this.animationId = null;
         this.currentStepIndex = 0;
         this.steps = [];
         this.isPlaying = false;
         this.speed = 500;
-        // Audio context removed
     }
 
     renderGrid(rows, cols, rowHeaders, colHeaders, isInteractive = false) {
         this.container.innerHTML = '';
         this.cells = [];
-
-        // Set CSS Grid template
-        // +1 for headers
         this.container.style.gridTemplateColumns = `auto repeat(${cols}, 1fr)`;
-
-        // Top-Left Corner (Empty)
         this._createCell('header', '');
-
-        // Col Headers
         colHeaders.forEach(header => this._createCell('header', header));
 
         for (let i = 0; i < rows; i++) {
-            // Row Header
             this._createCell('header', rowHeaders[i]);
-
             this.cells[i] = [];
             for (let j = 0; j < cols; j++) {
                 const cell = document.createElement('div');
@@ -42,8 +32,6 @@ class Visualizer {
                     input.dataset.row = i;
                     input.dataset.col = j;
                     cell.appendChild(input);
-                } else {
-                    cell.textContent = ''; // Start empty
                 }
 
                 this.container.appendChild(cell);
@@ -61,7 +49,7 @@ class Visualizer {
     }
 
     loadSteps(steps) {
-        this.pause(); // Ensure no previous animation is running
+        this.pause();
         this.steps = steps;
         this.currentStepIndex = 0;
         this.resetVisuals();
@@ -94,7 +82,7 @@ class Visualizer {
         if (this.currentStepIndex > 0) {
             this.currentStepIndex--;
             const step = this.steps[this.currentStepIndex];
-            if (step.type === 'update') {
+            if (step?.type === 'update') {
                 this.cells[step.row][step.col].textContent = '';
                 this.cells[step.row][step.col].classList.remove('target');
             }
@@ -104,7 +92,6 @@ class Visualizer {
 
     _animate() {
         if (!this.isPlaying) return;
-
         if (this.currentStepIndex >= this.steps.length) {
             this.isPlaying = false;
             return;
@@ -112,42 +99,41 @@ class Visualizer {
 
         this._executeStep(this.currentStepIndex);
         this.currentStepIndex++;
-
-        this.animationId = setTimeout(() => {
-            this._animate();
-        }, this.speed);
+        this.animationId = setTimeout(() => this._animate(), this.speed);
     }
 
     _executeStep(index) {
         if (index < 0 || index >= this.steps.length) return;
         const step = this.steps[index];
-
-        // Clear previous highlights
         this.clearHighlights();
+        this._highlightDependencies(step);
+        this._highlightTarget(step);
+        this._updateExplanation(step.description);
+        this._updateCellValue(step);
+    }
 
-        // Highlight dependencies (Optimal substructure)
-        if (step.highlight) {
-            step.highlight.forEach(coord => {
-                if (this.cells[coord.r] && this.cells[coord.r][coord.c]) {
-                    this.cells[coord.r][coord.c].classList.add('highlight');
-                }
-            });
+    _highlightDependencies(step) {
+        if (!step.highlight) return;
+        step.highlight.forEach(coord => {
+            this.cells[coord.r]?.[coord.c]?.classList.add('highlight');
+        });
+    }
+
+    _highlightTarget(step) {
+        const targetCell = this.cells[step.row]?.[step.col];
+        if (targetCell) {
+            targetCell.classList.add('target');
         }
+    }
 
-        // Highlight current target
-        const targetCell = this.cells[step.row][step.col];
-        targetCell.classList.add('target');
+    _updateExplanation(text) {
+        this.explanationContent.innerHTML = text;
+    }
 
-        // Show explanation
-        this.explanationContent.innerHTML = step.description;
-
-        // If update, set value
-        if (step.type === 'update') {
-            targetCell.textContent = step.value;
-        } else {
-            // Inspecting
-            targetCell.textContent = step.value; // user sees '?'
-        }
+    _updateCellValue(step) {
+        const targetCell = this.cells[step.row]?.[step.col];
+        if (!targetCell) return;
+        targetCell.textContent = step.type === 'update' ? step.value : step.value;
     }
 
     clearHighlights() {
@@ -159,8 +145,8 @@ class Visualizer {
 
     resetVisuals() {
         this.clearHighlights();
-        this.cells.flat().forEach(cell => cell.textContent = '');
-        this.explanationContent.textContent = "Ready to start...";
+        this.cells.flat().forEach(cell => (cell.textContent = ''));
+        this.explanationContent.textContent = 'Ready to start...';
     }
 
     setSpeed(ms) {

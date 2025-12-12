@@ -363,6 +363,29 @@ input[type=number] {
     color: white;
 }
 
+.heap-op-btn {
+    background: var(--bg-input);
+    border: 2px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.heap-op-btn:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.heap-op-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
 /* Status Text */
 .status-content {
     font-family: monospace;
