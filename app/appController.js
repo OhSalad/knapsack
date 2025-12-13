@@ -1,7 +1,10 @@
 import { KnapsackSolver, generateRandomKnapsack } from '../components/knapsack/solver.js';
 import { LCSSolver, generateRandomLCS } from '../components/lcs/solver.js';
 import { HeapSolver, generateRandomHeapArray } from '../components/heap/solver.js';
+import { CountingSortSolver, generateRandomCountingSortArray } from '../components/countingsort/solver.js';
 import { HeapVisualizer } from '../components/heap/visualizer.js';
+import { CountingSortVisualizer } from '../components/countingsort/visualizer.js';
+import { CountingSortMonkMode } from '../components/countingsort/monkMode.js';
 import { HeapMonkMode } from '../components/heap/monkMode.js';
 import { HeapBuilder } from '../components/heap/builder.js';
 import { Visualizer } from '../components/common/visualizer.js';
@@ -21,7 +24,8 @@ const DEFAULT_STATE = {
     heapBuilder: null,
     isHeapBuilderActive: false,
     heapOperation: 'build',
-    hasCustomHeap: false
+    hasCustomHeap: false,
+    countingSortData: null
 };
 
 export class AppController {
@@ -34,6 +38,8 @@ export class AppController {
         this.heapVisualizer = null;
         this.heapMonkMode = null;
         this.heapBuilder = null;
+        this.countingSortVisualizer = null;
+        this.countingSortMonkMode = null;
     }
 
     init() {
@@ -57,8 +63,10 @@ export class AppController {
             knapsackConfig: document.getElementById('knapsack-config'),
             lcsConfig: document.getElementById('lcs-config'),
             heapConfig: document.getElementById('heap-config'),
+            countingSortConfig: document.getElementById('countingsort-config'),
             itemsPreview: document.getElementById('items-preview'),
             heapArrayPreview: document.getElementById('heap-array-preview'),
+            csArrayPreview: document.getElementById('cs-array-preview'),
             startBtn: document.getElementById('start-btn'),
             randomBtn: document.getElementById('random-btn'),
             inputCap: document.getElementById('capacity-input'),
@@ -67,6 +75,8 @@ export class AppController {
             inputStrB: document.getElementById('str-b-input'),
             inputHeapSize: document.getElementById('heap-size-input'),
             inputHeapMaxValue: document.getElementById('heap-max-value'),
+            inputCsSize: document.getElementById('cs-size-input'),
+            inputCsMaxValue: document.getElementById('cs-max-value'),
             playBtn: document.getElementById('play-btn'),
             pauseBtn: document.getElementById('pause-btn'),
             nextBtn: document.getElementById('next-step-btn'),
@@ -106,6 +116,7 @@ export class AppController {
             this._populateRandomData();
             if (this.state.algo === 'knapsack') this._renderItemsPreview();
             if (this.state.algo === 'heap') this._renderHeapArrayPreview();
+            if (this.state.algo === 'countingsort') this._renderCountingSortArrayPreview();
             this._resetSimulationState();
             this._resetHeapStats();
             this.visualizer.resetVisuals();
@@ -123,7 +134,7 @@ export class AppController {
                 this.els.heapOpBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 this.state.heapOperation = btn.dataset.operation;
-                
+
                 // Show/hide insert value input
                 if (this.state.heapOperation === 'insert') {
                     this.els.insertValueContainer?.classList.remove('hidden');
@@ -158,6 +169,7 @@ export class AppController {
             this.visualizer.setSpeed(val);
             this.tracebackManager.setSpeed(val);
             this.heapVisualizer?.setSpeed(val);
+            this.countingSortVisualizer?.setSpeed(val);
         });
     }
 
@@ -165,10 +177,12 @@ export class AppController {
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
                 e.preventDefault();
-                this.state.algo === 'heap' ? this._toggleHeapPlay() : this._toggleDpPlay();
+                if (this.state.algo === 'heap') this._toggleHeapPlay();
+                else if (this.state.algo === 'countingsort') this._toggleCountingSortPlay();
+                else this._toggleDpPlay();
             }
-            if (e.code === 'ArrowRight') this.state.algo === 'heap' ? this.heapVisualizer?.next() : this.visualizer.next();
-            if (e.code === 'ArrowLeft') this.state.algo === 'heap' ? this.heapVisualizer?.prev() : this.visualizer.prev();
+            if (e.code === 'ArrowRight') this._stepForward();
+            if (e.code === 'ArrowLeft') this._stepBackward();
             if (e.code === 'KeyR') this._runSimulation();
         });
     }
@@ -217,7 +231,15 @@ export class AppController {
             controls.style.pointerEvents = 'all';
             this.els.startBtn.textContent = 'Start / Restart';
         }
-        const hasData = this.state.algo === 'heap' ? this.state.heapData : this.state.data;
+        // Check for data based on the current algorithm
+        let hasData = false;
+        if (this.state.algo === 'heap') {
+            hasData = !!this.state.heapData;
+        } else if (this.state.algo === 'countingsort') {
+            hasData = !!this.state.countingSortData;
+        } else {
+            hasData = !!this.state.data;
+        }
         if (hasData) this._runSimulation();
     }
 
@@ -225,31 +247,47 @@ export class AppController {
         this.els.knapsackConfig.classList.add('hidden');
         this.els.lcsConfig.classList.add('hidden');
         this.els.heapConfig.classList.add('hidden');
+        this.els.countingSortConfig?.classList.add('hidden');
         const heapLegendItems = document.querySelectorAll('.heap-legend');
-        const dpLegendItems = document.querySelectorAll('#legend-list > li:not(.heap-legend)');
+        const csLegendItems = document.querySelectorAll('.cs-legend');
+        const dpLegendItems = document.querySelectorAll('#legend-list > li:not(.heap-legend):not(.cs-legend)');
+
+        // Reset viz-card modes
+        this.els.vizCard.classList.remove('heap-mode', 'countingsort-mode');
+
         if (this.state.algo === 'knapsack') {
             this.els.knapsackConfig.classList.remove('hidden');
             this.els.gridTitle.textContent = 'Knapsack Table';
             this._renderItemsPreview();
-            this.els.vizCard.classList.remove('heap-mode');
             heapLegendItems.forEach(li => li.classList.add('hidden'));
+            csLegendItems.forEach(li => li.classList.add('hidden'));
             dpLegendItems.forEach(li => li.classList.remove('hidden'));
             this.els.tracebackBtn.classList.remove('hidden');
         } else if (this.state.algo === 'lcs') {
             this.els.lcsConfig.classList.remove('hidden');
             this.els.gridTitle.textContent = 'LCS Table';
-            this.els.vizCard.classList.remove('heap-mode');
             heapLegendItems.forEach(li => li.classList.add('hidden'));
+            csLegendItems.forEach(li => li.classList.add('hidden'));
             dpLegendItems.forEach(li => li.classList.remove('hidden'));
             this.els.tracebackBtn.classList.remove('hidden');
-        } else {
+        } else if (this.state.algo === 'heap') {
             this.els.heapConfig.classList.remove('hidden');
             this.els.gridTitle.textContent = 'Heap Visualization';
             this.els.vizCard.classList.add('heap-mode');
             heapLegendItems.forEach(li => li.classList.remove('hidden'));
+            csLegendItems.forEach(li => li.classList.add('hidden'));
             dpLegendItems.forEach(li => li.classList.add('hidden'));
             this.els.tracebackBtn.classList.add('hidden');
             this._renderHeapArrayPreview();
+        } else if (this.state.algo === 'countingsort') {
+            this.els.countingSortConfig.classList.remove('hidden');
+            this.els.gridTitle.textContent = 'Counting Sort Visualization';
+            this.els.vizCard.classList.add('countingsort-mode');
+            heapLegendItems.forEach(li => li.classList.add('hidden'));
+            csLegendItems.forEach(li => li.classList.remove('hidden'));
+            dpLegendItems.forEach(li => li.classList.add('hidden'));
+            this.els.tracebackBtn.classList.add('hidden');
+            this._renderCountingSortArrayPreview();
         }
     }
 
@@ -257,12 +295,16 @@ export class AppController {
     _runSimulation() {
         const inputData = this._getDataFromInputs();
         this._resetSimulationState();
-        if (this.state.algo !== 'heap') {
+        if (this.state.algo !== 'heap' && this.state.algo !== 'countingsort') {
             this.els.tracebackBtn.disabled = true;
             this.tracebackManager.stopTraceback();
         }
         if (this.state.algo === 'heap') {
             this._runHeapSimulation(inputData);
+            return;
+        }
+        if (this.state.algo === 'countingsort') {
+            this._runCountingSortSimulation(inputData);
             return;
         }
         if (this.state.mode === 'monk') {
@@ -305,19 +347,19 @@ export class AppController {
         this._resetHeapStats();
         const monkProgressContainer = document.getElementById('monk-progress-container');
         const operation = this.state.heapOperation || 'build';
-        
+
         // Get operation parameters
         let operationData = { array, operation };
         if (operation === 'insert') {
             operationData.insertValue = parseInt(this.els.insertValueInput?.value || 25, 10);
         }
-        
+
         if (this.state.mode === 'monk') {
             if (!this.heapMonkMode) this.heapMonkMode = new HeapMonkMode(this.heapVisualizer);
             else this.heapMonkMode.reset();
             const result = this.heapMonkMode.startLevel(operationData);
             monkProgressContainer?.classList.remove('hidden');
-            
+
             let statusMsg = '';
             if (operation === 'build') {
                 statusMsg = `Monk Mode: Build the max-heap by clicking nodes to swap. ${result.totalSwaps} swaps needed.`;
@@ -326,7 +368,7 @@ export class AppController {
             } else if (operation === 'insert') {
                 statusMsg = `Monk Mode: Insert ${operationData.insertValue} into heap. ${result.totalSwaps} swaps needed.`;
             }
-            
+
             this._updateStatus(statusMsg);
             this.els.cellCountLabel.textContent = result.finalArray?.length || array.length;
             this.state.isSimulationComplete = true;
@@ -335,7 +377,7 @@ export class AppController {
             monkProgressContainer?.classList.add('hidden');
             const solver = new HeapSolver(array, operation);
             let result;
-            
+
             if (operation === 'build') {
                 result = solver.buildMaxHeap();
             } else if (operation === 'extract') {
@@ -343,12 +385,12 @@ export class AppController {
             } else if (operation === 'insert') {
                 result = solver.insertElement(operationData.insertValue);
             }
-            
+
             this.heapVisualizer.renderHeap(result.heap);
             this.heapVisualizer.loadSteps(result.steps);
             this.els.cellCountLabel.textContent = result.heap.length;
             this.state.isSimulationComplete = true;
-            
+
             let statusMsg = '';
             if (operation === 'build') {
                 statusMsg = `Ready. Press Play to visualize Build-Max-Heap. Total steps: ${result.steps.length}`;
@@ -357,8 +399,52 @@ export class AppController {
             } else if (operation === 'insert') {
                 statusMsg = `Ready. Press Play to visualize Insert (${operationData.insertValue}). Steps: ${result.steps.length}`;
             }
-            
+
             this._updateStatus(statusMsg);
+        }
+    }
+
+    _runCountingSortSimulation(array) {
+        const monkProgressContainer = document.getElementById('monk-progress-container');
+
+        if (this.state.mode === 'monk') {
+            // Monk Mode - interactive practice
+            if (!this.countingSortMonkMode) {
+                this.countingSortMonkMode = new CountingSortMonkMode('grid-container', 'status-text');
+            }
+
+            // Reset visualizer if it was active
+            if (this.countingSortVisualizer) {
+                this.countingSortVisualizer.pause();
+            }
+
+            const result = this.countingSortMonkMode.startLevel(array);
+            monkProgressContainer?.classList.remove('hidden');
+
+            this.els.cellCountLabel.textContent = array.length;
+            this.state.isSimulationComplete = true;
+
+        } else {
+            // Visualize Mode - step-by-step animation
+            if (!this.countingSortVisualizer) {
+                this.countingSortVisualizer = new CountingSortVisualizer('grid-container', 'status-text');
+            }
+
+            // Reset monk mode if it was active
+            if (this.countingSortMonkMode) {
+                this.countingSortMonkMode.reset();
+            }
+            monkProgressContainer?.classList.add('hidden');
+
+            const solver = new CountingSortSolver(array);
+            const result = solver.solve();
+
+            this.countingSortVisualizer.render(array);
+            this.countingSortVisualizer.loadSteps(result.steps);
+            this.els.cellCountLabel.textContent = array.length;
+            this.state.isSimulationComplete = true;
+
+            this._updateStatus(`Ready. Press Play to visualize Counting Sort. Total steps: ${result.steps.length}`);
         }
     }
 
@@ -389,7 +475,7 @@ export class AppController {
             this.state.data = data;
             this.els.inputStrA.value = data.s1;
             this.els.inputStrB.value = data.s2;
-        } else {
+        } else if (this.state.algo === 'heap') {
             let size = parseInt(this.els.inputHeapSize.value, 10) || 10;
             let maxValue = parseInt(this.els.inputHeapMaxValue.value, 10) || 50;
             size = Math.min(Math.max(size, 5), 15);
@@ -399,6 +485,16 @@ export class AppController {
             this.els.inputHeapSize.value = size;
             this.els.inputHeapMaxValue.value = maxValue;
             this._renderHeapArrayPreview();
+        } else if (this.state.algo === 'countingsort') {
+            let size = parseInt(this.els.inputCsSize?.value, 10) || 10;
+            let maxValue = parseInt(this.els.inputCsMaxValue?.value, 10) || 9;
+            size = Math.min(Math.max(size, 5), 15);
+            maxValue = Math.min(Math.max(maxValue, 1), 20);
+            const array = generateRandomCountingSortArray(size, maxValue);
+            this.state.countingSortData = array;
+            if (this.els.inputCsSize) this.els.inputCsSize.value = size;
+            if (this.els.inputCsMaxValue) this.els.inputCsMaxValue.value = maxValue;
+            this._renderCountingSortArrayPreview();
         }
     }
 
@@ -416,6 +512,17 @@ export class AppController {
             const s1 = this.els.inputStrA.value;
             const s2 = this.els.inputStrB.value;
             return { s1, s2 };
+        }
+        if (this.state.algo === 'countingsort') {
+            let size = parseInt(this.els.inputCsSize?.value, 10) || 10;
+            let maxValue = parseInt(this.els.inputCsMaxValue?.value, 10) || 9;
+            if (this.state.countingSortData && this.state.countingSortData.length === size) {
+                return this.state.countingSortData;
+            }
+            const array = generateRandomCountingSortArray(size, maxValue);
+            this.state.countingSortData = array;
+            this._renderCountingSortArrayPreview();
+            return array;
         }
         // If we have custom heap data, always use it
         if (this.state.hasCustomHeap && this.state.heapData) {
@@ -468,6 +575,17 @@ export class AppController {
         });
     }
 
+    _renderCountingSortArrayPreview() {
+        if (!this.state.countingSortData || !this.els.csArrayPreview) return;
+        this.els.csArrayPreview.innerHTML = '';
+        this.state.countingSortData.forEach((val, i) => {
+            const tag = document.createElement('div');
+            tag.className = 'cs-preview-tag';
+            tag.textContent = `[${i}]: ${val}`;
+            this.els.csArrayPreview.appendChild(tag);
+        });
+    }
+
     _resetHeapStats() {
         const heapifyEl = document.getElementById('heapify-count');
         const swapEl = document.getElementById('swap-count');
@@ -494,21 +612,25 @@ export class AppController {
 
     _play() {
         if (this.state.algo === 'heap' && this.heapVisualizer) this.heapVisualizer.play();
+        else if (this.state.algo === 'countingsort' && this.countingSortVisualizer) this.countingSortVisualizer.play();
         else this.visualizer.play();
     }
 
     _pause() {
         if (this.state.algo === 'heap' && this.heapVisualizer) this.heapVisualizer.pause();
+        else if (this.state.algo === 'countingsort' && this.countingSortVisualizer) this.countingSortVisualizer.pause();
         else this.visualizer.pause();
     }
 
     _stepForward() {
         if (this.state.algo === 'heap' && this.heapVisualizer) this.heapVisualizer.next();
+        else if (this.state.algo === 'countingsort' && this.countingSortVisualizer) this.countingSortVisualizer.next();
         else this.visualizer.next();
     }
 
     _stepBackward() {
         if (this.state.algo === 'heap' && this.heapVisualizer) this.heapVisualizer.prev();
+        else if (this.state.algo === 'countingsort' && this.countingSortVisualizer) this.countingSortVisualizer.prev();
         else this.visualizer.prev();
     }
 
@@ -521,6 +643,12 @@ export class AppController {
     _toggleDpPlay() {
         if (this.visualizer.isPlaying) this.visualizer.pause();
         else this.visualizer.play();
+    }
+
+    _toggleCountingSortPlay() {
+        if (!this.countingSortVisualizer) return;
+        if (this.countingSortVisualizer.isPlaying) this.countingSortVisualizer.pause();
+        else this.countingSortVisualizer.play();
     }
 
     _toggleHeapBuilder() {

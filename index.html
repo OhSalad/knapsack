@@ -31,6 +31,7 @@
             <button class="tab-btn active" data-algo="knapsack">Knapsack 0/1</button>
             <button class="tab-btn" data-algo="lcs">LCS</button>
             <button class="tab-btn" data-algo="heap">Heap</button>
+            <button class="tab-btn" data-algo="countingsort">Counting Sort</button>
         </div>
 
         <!-- Configuration Card -->
@@ -88,9 +89,11 @@
                         <button class="heap-op-btn" data-operation="extract">⬆️ Extract Max</button>
                         <button class="heap-op-btn" data-operation="insert">⬇️ Insert Element</button>
                     </div>
-                    <div id="insert-value-container" class="hidden" style="margin-top: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
+                    <div id="insert-value-container" class="hidden"
+                        style="margin-top: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
                         <label style="font-size: 0.9rem;">Value to insert:</label>
-                        <input type="number" id="insert-value-input" value="25" min="1" max="100" style="width: 80px; padding: 0.4rem;">
+                        <input type="number" id="insert-value-input" value="25" min="1" max="100"
+                            style="width: 80px; padding: 0.4rem;">
                     </div>
                 </div>
                 <!-- Custom Build Toggle -->
@@ -129,6 +132,25 @@
                         <span class="stat-label">Progress:</span>
                         <span class="stat-value" id="monk-progress">0 / 0</span>
                     </div>
+                </div>
+            </div>
+
+            <div class="config-content hidden" id="countingsort-config">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Array Size (5-15)</label>
+                        <input type="number" id="cs-size-input" value="10" min="5" max="15">
+                    </div>
+                    <div class="input-group">
+                        <label>Max Value (1-20)</label>
+                        <input type="number" id="cs-max-value" value="9" min="1" max="20">
+                    </div>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
+                    💡 Counting Sort works best with non-negative integers in a limited range (0 to max value).
+                </p>
+                <div class="cs-array-preview" id="cs-array-preview">
+                    <!-- Javascript will populate the array here -->
                 </div>
             </div>
 
@@ -205,6 +227,10 @@
                         <li class="heap-legend hidden"><span class="dot heap-compare"></span> Comparing Nodes</li>
                         <li class="heap-legend hidden"><span class="dot heap-swap"></span> Swap Operation</li>
                         <li class="heap-legend hidden"><span class="dot heap-correct"></span> Correct (Monk Mode)</li>
+                        <li class="cs-legend hidden"><span class="dot cs-current"></span> Current Element</li>
+                        <li class="cs-legend hidden"><span class="dot cs-update"></span> Count Update</li>
+                        <li class="cs-legend hidden"><span class="dot cs-source"></span> Source Index</li>
+                        <li class="cs-legend hidden"><span class="dot cs-target"></span> Output Position</li>
                     </ul>
                 </section>
             </div>

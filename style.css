@@ -1282,3 +1282,890 @@ input[type=number] {
     background: transparent;
     border: none;
 }
+
+/* ===============================================
+   COUNTING SORT VISUALIZATION STYLES
+   =============================================== */
+
+/* Counting Sort Mode */
+.viz-card.countingsort-mode .grid-scroll-container {
+    max-height: none;
+    overflow: visible;
+}
+
+.viz-card.countingsort-mode .viz-grid {
+    display: block;
+    background: transparent;
+    border: none;
+}
+
+/* Main Container */
+.counting-sort-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+/* Phase Indicator */
+.cs-phase-indicator {
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    transition: all 0.3s ease;
+}
+
+.cs-phase-indicator .phase-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.cs-phase-indicator.phase-find-max {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.2) 100%);
+    border-color: rgba(245, 158, 11, 0.4);
+    color: #fbbf24;
+}
+
+.cs-phase-indicator.phase-count {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.2) 100%);
+    border-color: rgba(59, 130, 246, 0.4);
+    color: #60a5fa;
+}
+
+.cs-phase-indicator.phase-cumulative {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+    border-color: rgba(168, 85, 247, 0.4);
+    color: #c084fc;
+}
+
+.cs-phase-indicator.phase-output {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(219, 39, 119, 0.2) 100%);
+    border-color: rgba(236, 72, 153, 0.4);
+    color: #f472b6;
+}
+
+.cs-phase-indicator.phase-complete {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #34d399;
+    animation: phase-complete-pulse 2s infinite;
+}
+
+@keyframes phase-complete-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(16, 185, 129, 0.5);
+    }
+}
+
+/* Loop Panel */
+.cs-loop-panel {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 1rem;
+    border-left: 4px solid var(--primary);
+}
+
+.cs-loop-panel.hidden {
+    display: none;
+}
+
+.cs-loop-panel .loop-header {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.cs-loop-panel .loop-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.cs-loop-panel .loop-variable {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 1rem;
+    color: var(--text-main);
+}
+
+.cs-loop-panel .loop-progress-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.cs-loop-panel .loop-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, #8b5cf6 100%);
+    transition: width 0.3s ease;
+    border-radius: 3px;
+}
+
+.cs-loop-panel .loop-code {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+    color: var(--success);
+    background: rgba(16, 185, 129, 0.1);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    overflow-x: auto;
+}
+
+.cs-loop-panel .loop-code code {
+    white-space: nowrap;
+}
+
+/* Array Sections */
+.cs-array-section {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    border-left: 4px solid var(--border-color);
+}
+
+.cs-input-section {
+    border-left-color: #f59e0b;
+}
+
+.cs-count-section {
+    border-left-color: #3b82f6;
+}
+
+.cs-output-section {
+    border-left-color: #10b981;
+}
+
+.cs-array-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cs-array-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.cs-array-length {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+.cs-array-cells {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-start;
+}
+
+.cs-empty-array {
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 1rem;
+    text-align: center;
+    width: 100%;
+}
+
+/* Array Cells */
+.cs-cell {
+    width: 52px;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    position: relative;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.cs-input-cell {
+    background: linear-gradient(145deg, #b45309, #92400e);
+    border-color: #d97706;
+}
+
+.cs-count-cell {
+    background: linear-gradient(145deg, #1d4ed8, #1e40af);
+    border-color: #3b82f6;
+}
+
+.cs-output-cell {
+    background: linear-gradient(145deg, #047857, #065f46);
+    border-color: #10b981;
+}
+
+.cs-cell-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+}
+
+.cs-cell-index {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.7);
+    position: absolute;
+    bottom: 4px;
+}
+
+/* Cell Highlight States */
+.cs-cell.highlight-current {
+    transform: scale(1.15);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+    border-color: #fbbf24 !important;
+    z-index: 10;
+    animation: cs-pulse 1s infinite;
+}
+
+@keyframes cs-pulse {
+
+    0%,
+    100% {
+        transform: scale(1.15);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.cs-cell.highlight-compare {
+    background: linear-gradient(145deg, #6366f1, #4f46e5) !important;
+    border-color: #818cf8 !important;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+}
+
+.cs-cell.highlight-update {
+    background: linear-gradient(145deg, #ec4899, #db2777) !important;
+    border-color: #f472b6 !important;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.5);
+    animation: update-flash 0.5s ease;
+}
+
+@keyframes update-flash {
+    0% {
+        transform: scale(1.1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+.cs-cell.highlight-source {
+    background: linear-gradient(145deg, #8b5cf6, #7c3aed) !important;
+    border-color: #a78bfa !important;
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+}
+
+.cs-cell.highlight-target {
+    background: linear-gradient(145deg, #10b981, #059669) !important;
+    border-color: #34d399 !important;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+    animation: target-glow 0.6s ease;
+}
+
+@keyframes target-glow {
+    0% {
+        box-shadow: 0 0 0 rgba(16, 185, 129, 0);
+    }
+
+    50% {
+        box-shadow: 0 0 30px rgba(16, 185, 129, 0.8);
+    }
+
+    100% {
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+    }
+}
+
+.cs-cell.highlight-complete {
+    animation: complete-wave 0.5s ease forwards;
+}
+
+@keyframes complete-wave {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+}
+
+/* Stats Panel */
+.cs-stats-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border-radius: 10px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.cs-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    flex: 1;
+    min-width: 120px;
+}
+
+.cs-stat .stat-label {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.cs-stat .stat-value {
+    color: var(--success);
+    font-weight: 700;
+    font-size: 1.1rem;
+    font-family: monospace;
+}
+
+/* Array Preview in Config */
+.cs-array-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.cs-preview-tag {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: white;
+    font-family: monospace;
+    font-weight: 600;
+}
+
+/* Legend Dots for Counting Sort */
+.dot.cs-current {
+    background: linear-gradient(145deg, #f59e0b, #d97706);
+    border: 1px solid #fbbf24;
+}
+
+.dot.cs-update {
+    background: linear-gradient(145deg, #ec4899, #db2777);
+    border: 1px solid #f472b6;
+}
+
+.dot.cs-source {
+    background: linear-gradient(145deg, #8b5cf6, #7c3aed);
+    border: 1px solid #a78bfa;
+}
+
+.dot.cs-target {
+    background: linear-gradient(145deg, #10b981, #059669);
+    border: 1px solid #34d399;
+}
+
+/* Responsive Adjustments for Counting Sort */
+@media (max-width: 768px) {
+    .cs-cell {
+        width: 42px;
+        height: 50px;
+    }
+
+    .cs-cell-value {
+        font-size: 0.95rem;
+    }
+
+    .cs-stats-panel {
+        flex-direction: column;
+    }
+
+    .cs-stat {
+        min-width: auto;
+    }
+
+    .cs-phase-indicator {
+        font-size: 0.95rem;
+        padding: 0.75rem 1rem;
+    }
+}
+
+/* ===============================================
+   COUNT TRANSITION STYLES (Before → After Display)
+   =============================================== */
+
+/* Make cell wider when showing transition */
+.cs-cell.count-transition {
+    width: auto;
+    min-width: 75px;
+    padding: 0 8px;
+}
+
+.cs-cell.count-transition .cs-cell-value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 0.95rem;
+}
+
+/* "Before" value - crossed out / faded */
+.cs-cell .count-before {
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: line-through;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+/* Arrow indicator */
+.cs-cell .count-arrow {
+    color: #f472b6;
+    font-weight: 700;
+    font-size: 0.9rem;
+    animation: arrow-pulse 0.8s infinite;
+}
+
+@keyframes arrow-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.2);
+    }
+}
+
+/* "After" value - emphasized */
+.cs-cell .count-after {
+    color: #34d399;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-shadow: 0 0 8px rgba(52, 211, 153, 0.5);
+}
+
+/* ===============================================
+   COUNTING SORT MONK MODE STYLES
+   =============================================== */
+
+.counting-sort-monk-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1rem;
+}
+
+/* Phase Indicator (Step Progress) */
+.cs-monk-phase-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+}
+
+.phase-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.phase-step .phase-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-input);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.phase-step .phase-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.phase-step.active {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: var(--primary);
+}
+
+.phase-step.active .phase-number {
+    background: var(--primary);
+    color: white;
+}
+
+.phase-step.active .phase-label {
+    color: var(--primary);
+}
+
+.phase-step.complete {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: var(--success);
+}
+
+.phase-step.complete .phase-number {
+    background: var(--success);
+    color: white;
+}
+
+.phase-step.complete .phase-number::after {
+    content: '✓';
+}
+
+.phase-step.complete .phase-label {
+    color: var(--success);
+}
+
+.phase-connector {
+    width: 40px;
+    height: 3px;
+    background: var(--border-color);
+    transition: background 0.3s ease;
+}
+
+.phase-connector.complete {
+    background: var(--success);
+}
+
+/* Instructions Panel */
+.cs-monk-instructions {
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border-radius: 10px;
+    border-left: 4px solid var(--primary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text-main);
+}
+
+.cs-monk-instructions code {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    color: #34d399;
+}
+
+/* Monk Mode Sections */
+.cs-monk-section {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    border-left: 4px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.cs-monk-section.active-phase {
+    border-left-color: var(--primary);
+    background: rgba(99, 102, 241, 0.05);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+}
+
+.cs-monk-section.hidden-phase {
+    opacity: 0.5;
+}
+
+.cs-input-section {
+    border-left-color: #f59e0b;
+}
+
+.cs-count-section.active-phase {
+    border-left-color: #3b82f6;
+}
+
+.cs-cumulative-section.active-phase {
+    border-left-color: #8b5cf6;
+}
+
+.cs-output-section.active-phase {
+    border-left-color: #10b981;
+}
+
+.cs-monk-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.cs-monk-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.cs-monk-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+.phase-badge {
+    margin-left: auto;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.phase-badge.complete {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+/* Monk Mode Cells */
+.cs-monk-cells {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.cs-monk-cell {
+    width: 52px;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    position: relative;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.cs-monk-cell.cs-input-cell {
+    background: linear-gradient(145deg, #b45309, #92400e);
+    border-color: #d97706;
+}
+
+.cs-monk-cell.cs-count-cell {
+    background: linear-gradient(145deg, #1d4ed8, #1e40af);
+    border-color: #3b82f6;
+}
+
+.cs-monk-cell.cs-cumulative-cell {
+    background: linear-gradient(145deg, #7c3aed, #6d28d9);
+    border-color: #8b5cf6;
+}
+
+.cs-monk-cell.cs-output-cell {
+    background: linear-gradient(145deg, #047857, #065f46);
+    border-color: #10b981;
+}
+
+.cs-monk-cell.locked {
+    opacity: 0.85;
+}
+
+/* Input styling in cells */
+.cs-monk-input {
+    width: 40px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.cs-monk-input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.cs-monk-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Hide spinners in number inputs */
+.cs-monk-input::-webkit-inner-spin-button,
+.cs-monk-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.cs-monk-input {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* Validation States */
+.cs-monk-cell.correct {
+    border-color: var(--success) !important;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    animation: correct-flash 0.5s ease;
+}
+
+@keyframes correct-flash {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.cs-monk-cell.incorrect {
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+    animation: shake 0.4s ease;
+}
+
+/* Actions */
+.cs-monk-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    padding: 0.5rem 0;
+}
+
+.cs-monk-check-btn {
+    min-width: 200px;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+}
+
+.cs-monk-hint-btn {
+    padding: 0.75rem 1.5rem;
+}
+
+/* Progress Panel */
+.cs-monk-progress-panel {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.progress-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.progress-label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.progress-value {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Celebration Animation */
+.cs-monk-cell.celebrate {
+    animation: celebrate 0.6s ease forwards;
+}
+
+@keyframes celebrate {
+    0% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(1.15) rotate(-5deg);
+    }
+
+    50% {
+        transform: scale(1.15) rotate(5deg);
+    }
+
+    75% {
+        transform: scale(1.1) rotate(-3deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cs-monk-cell {
+        width: 45px;
+        height: 52px;
+    }
+
+    .cs-monk-input {
+        width: 34px;
+        height: 28px;
+        font-size: 0.9rem;
+    }
+
+    .phase-step {
+        padding: 0.5rem 1rem;
+    }
+
+    .phase-connector {
+        width: 20px;
+    }
+
+    .cs-monk-progress-panel {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
