@@ -406,6 +406,24 @@ export class CountingSortMonkMode {
 
         // Clear previous validation styling
         event.target.parentElement.classList.remove('correct', 'incorrect');
+
+        // Immediate feedback: validate the input as user types
+        if (value !== null) {
+            let correctVal;
+            if (phase === 1) {
+                correctVal = this.countArrayKey[index];
+            } else if (phase === 2) {
+                correctVal = this.cumulativeArrayKey[index];
+            } else if (phase === 3) {
+                correctVal = this.outputArrayKey[index];
+            }
+
+            if (value === correctVal) {
+                event.target.parentElement.classList.add('correct');
+            } else {
+                event.target.parentElement.classList.add('incorrect');
+            }
+        }
     }
 
     _checkCurrentPhase() {

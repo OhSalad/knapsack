@@ -2028,6 +2028,13 @@ input[type=number] {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
+/* Increase cell size when focused for better input experience */
+.cs-monk-cell:focus-within {
+    transform: scale(1.15);
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+}
+
 .cs-monk-input:disabled {
     opacity: 0.5;
     cursor: not-allowed;
