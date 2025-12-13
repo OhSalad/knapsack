@@ -1,3 +1,62 @@
+/**
+ * =============================================================================
+ * LONGEST COMMON SUBSEQUENCE (LCS) - DYNAMIC PROGRAMMING SOLUTION
+ * =============================================================================
+ * 
+ * PROBLEM DESCRIPTION:
+ * Given two strings, find the length of their longest common subsequence.
+ * A subsequence is a sequence that can be derived from another sequence by
+ * deleting some or no elements without changing the order of remaining elements.
+ * 
+ * EXAMPLE:
+ *   String X: "ABCBDAB"
+ *   String Y: "BDCABA"
+ *   LCS: "BCBA" or "BDAB" (length = 4)
+ * 
+ * ALGORITHM APPROACH:
+ * This implementation uses bottom-up Dynamic Programming (tabulation).
+ * We build a 2D table dp[i][j] where:
+ *   - i = characters considered from string X (0 to m)
+ *   - j = characters considered from string Y (0 to n)
+ *   - dp[i][j] = length of LCS of X[0..i-1] and Y[0..j-1]
+ * 
+ * RECURRENCE RELATION:
+ *   If X[i-1] == Y[j-1]:
+ *       dp[i][j] = dp[i-1][j-1] + 1       // Characters match, extend LCS
+ *   Else:
+ *       dp[i][j] = max(dp[i-1][j], dp[i][j-1])  // Take max of excluding either
+ * 
+ * BASE CASE:
+ *   dp[0][j] = 0 for all j (empty X = no common subsequence)
+ *   dp[i][0] = 0 for all i (empty Y = no common subsequence)
+ * 
+ * TIME COMPLEXITY: O(m * n)
+ *   - Where m = length of string X
+ *   - Where n = length of string Y
+ *   - We fill each cell of the (m+1) × (n+1) table exactly once
+ * 
+ * SPACE COMPLEXITY: O(m * n)
+ *   - For the 2D DP table of size (m+1) × (n+1)
+ *   - Can be optimized to O(min(m, n)) using rolling array technique
+ * 
+ * OPTIMAL SUBSTRUCTURE:
+ *   The LCS of two strings can be constructed from LCS of their prefixes.
+ *   If last characters match, LCS includes that character plus LCS of prefixes.
+ *   If they don't match, LCS is the longer of two possible sub-solutions.
+ * 
+ * OVERLAPPING SUBPROBLEMS:
+ *   The same subproblems dp[i][j] are computed multiple times in the
+ *   naive recursive approach, justifying the use of dynamic programming.
+ * 
+ * APPLICATIONS:
+ *   - Diff utilities (comparing files)
+ *   - DNA sequence alignment in bioinformatics
+ *   - Version control systems
+ *   - Spell checkers and autocorrect
+ * 
+ * =============================================================================
+ */
+
 export class LCSSolver {
     constructor(str1, str2) {
         this.str1 = str1;

@@ -2176,3 +2176,548 @@ input[type=number] {
         gap: 0.5rem;
     }
 }
+
+/* ===============================================
+   ALGORITHM INFO CARD STYLES
+   =============================================== */
+
+.algo-info-card {
+    border-left: 3px solid #6366f1;
+}
+
+.algo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.complexity-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.complexity-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.complexity-badge.time {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.complexity-badge.space {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0.1) 100%);
+    color: #818cf8;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.algo-description {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+}
+
+.algo-description p {
+    margin-bottom: 0.5rem;
+}
+
+.algo-description p:last-of-type {
+    margin-bottom: 0.75rem;
+}
+
+.algo-description strong {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+.algo-description details {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.algo-description details[open] {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: var(--primary);
+}
+
+.algo-description summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--primary);
+    font-size: 0.8rem;
+    user-select: none;
+    transition: color 0.2s;
+}
+
+.algo-description summary:hover {
+    color: #818cf8;
+}
+
+.algo-description summary::marker {
+    color: var(--primary);
+}
+
+.algo-description code {
+    display: block;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.75rem;
+    color: #10b981;
+    line-height: 1.6;
+    overflow-x: auto;
+}
+
+/* Responsive adjustments for algo info */
+@media (max-width: 768px) {
+    .complexity-badges {
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .complexity-badge {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .algo-description {
+        font-size: 0.8rem;
+    }
+}
+
+/* ===============================================
+   STRASSEN MATRIX MULTIPLICATION STYLES
+   =============================================== */
+
+/* Strassen Config Preview */
+.strassen-matrices-preview {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.matrix-preview-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.matrix-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.matrix-preview .preview-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.preview-operator {
+    font-size: 1.5rem;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.matrix-preview-grid {
+    display: grid;
+    gap: 2px;
+    background: var(--border-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.matrix-preview-cell {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-card);
+    font-size: 0.85rem;
+    font-family: monospace;
+    color: var(--text-main);
+}
+
+/* Strassen Size Select */
+#strassen-size-input {
+    background: var(--bg-page);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    min-width: 120px;
+    cursor: pointer;
+}
+
+#strassen-size-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* Strassen Visualization */
+.strassen-viz {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.strassen-matrices-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.matrix-operator {
+    font-size: 2rem;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.strassen-matrix {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.matrix-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.matrix-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--border-color);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    padding: 2px;
+}
+
+.strassen-matrix.matrix-a .matrix-grid {
+    border-color: #6366f1;
+}
+
+.strassen-matrix.matrix-b .matrix-grid {
+    border-color: #f59e0b;
+}
+
+.strassen-matrix.matrix-c .matrix-grid,
+.strassen-matrix.result .matrix-grid {
+    border-color: #10b981;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+.matrix-row {
+    display: flex;
+    gap: 2px;
+}
+
+.matrix-cell {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-card);
+    font-size: 1rem;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-weight: 600;
+    color: var(--text-main);
+    transition: all 0.3s ease;
+}
+
+/* Divide Section */
+.strassen-divide-section,
+.strassen-products-section,
+.strassen-combine-section,
+.strassen-complete-section {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 1.25rem;
+    border: 1px solid var(--border-color);
+}
+
+.strassen-divide-section h4,
+.strassen-products-section h4,
+.strassen-combine-section h4 {
+    margin-bottom: 1rem;
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+.quadrants-grid {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.quadrant-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.quadrant-title {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.quadrant-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.small-matrix {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.small-matrix-label {
+    font-size: 0.7rem;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.small-matrix.result .small-matrix-label {
+    color: var(--success);
+}
+
+.small-matrix-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 1px;
+}
+
+.small-matrix.result .small-matrix-grid {
+    border-color: var(--success);
+}
+
+.small-matrix-row {
+    display: flex;
+    gap: 1px;
+}
+
+.small-matrix-cell {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-card);
+    font-size: 0.75rem;
+    font-family: monospace;
+}
+
+/* Products Section */
+.products-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+}
+
+.product-item {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.product-item.active {
+    border-color: var(--warning);
+    background: rgba(245, 158, 11, 0.1);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+    animation: product-pulse 1s ease infinite;
+}
+
+@keyframes product-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+    }
+}
+
+.product-item.computed {
+    border-color: var(--success);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.product-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.product-item.active .product-name {
+    color: var(--warning);
+}
+
+.product-item.computed .product-name {
+    color: var(--success);
+}
+
+.product-formula {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: monospace;
+    margin-top: 0.25rem;
+}
+
+.product-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--success);
+    margin-top: 0.5rem;
+}
+
+/* Combine Section */
+.combine-formulas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.formula {
+    padding: 0.5rem 0.75rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.result-quadrants {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+/* Complete Section */
+.strassen-complete-section {
+    text-align: center;
+}
+
+.complete-badge {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--success);
+    margin-bottom: 1rem;
+}
+
+.savings-info {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    display: inline-block;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.savings-info strong {
+    color: var(--text-main);
+}
+
+/* Stats Panel */
+.strassen-stats-panel {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    margin-top: 1rem;
+}
+
+/* Legend Colors */
+.dot.strassen-divide {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+.dot.strassen-product {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.dot.strassen-combine {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .strassen-matrices-row {
+        flex-direction: column;
+    }
+
+    .matrix-cell {
+        width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
+    }
+
+    .small-matrix-cell {
+        width: 22px;
+        height: 22px;
+        font-size: 0.65rem;
+    }
+
+    .products-list {
+        grid-template-columns: 1fr;
+    }
+
+    .combine-formulas {
+        grid-template-columns: 1fr;
+    }
+
+    .strassen-stats-panel {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

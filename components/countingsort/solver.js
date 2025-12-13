@@ -1,12 +1,70 @@
 /**
- * Counting Sort Solver with step-by-step visualization
+ * =============================================================================
+ * COUNTING SORT ALGORITHM - LINEAR TIME SORTING
+ * =============================================================================
  * 
- * Counting Sort Algorithm:
- * 1. Find the maximum value in the array
- * 2. Create a count array of size (max + 1)
- * 3. Count occurrences of each element
- * 4. Calculate cumulative counts (prefix sum)
- * 5. Build the output array by placing elements at their correct positions
+ * ALGORITHM DESCRIPTION:
+ * Counting Sort is a non-comparison-based sorting algorithm that works by
+ * counting the occurrences of each unique element in the input array and
+ * using arithmetic to determine the correct position of each element.
+ * 
+ * ALGORITHM STEPS:
+ * 1. Find Maximum: Determine the maximum value k in the array
+ * 2. Initialize Count Array: Create array of size (k + 1), filled with zeros
+ * 3. Count Phase: Count occurrences of each element
+ *    count[array[i]]++ for each element
+ * 4. Cumulative Phase: Calculate prefix sums
+ *    count[i] = count[i] + count[i-1]
+ *    Now count[i] represents the position of element i in sorted output
+ * 5. Output Phase: Build sorted array (traverse input RIGHT to LEFT for stability)
+ *    output[count[array[i]] - 1] = array[i]
+ *    count[array[i]]--
+ * 
+ * TIME COMPLEXITY: O(n + k)
+ *   - Where n = number of elements in the input array
+ *   - Where k = range of input values (max value + 1)
+ *   - Phase 0 (Find Max): O(n)
+ *   - Phase 1 (Count): O(n)
+ *   - Phase 2 (Cumulative): O(k)
+ *   - Phase 3 (Output): O(n)
+ *   - Total: O(n + k)
+ * 
+ * COMPARISON WITH OTHER SORTS:
+ *   - Counting Sort: O(n + k) - Best when k = O(n)
+ *   - Quick Sort: O(n log n) average, O(n²) worst
+ *   - Merge Sort: O(n log n) always
+ *   - Heap Sort: O(n log n) always
+ *   
+ *   Counting Sort beats O(n log n) when k ≤ n, i.e., when range is small.
+ * 
+ * SPACE COMPLEXITY: O(n + k)
+ *   - Count array: O(k) for storing counts of k distinct values
+ *   - Output array: O(n) for storing the sorted result
+ *   - Total auxiliary space: O(n + k)
+ * 
+ * STABILITY:
+ *   This implementation is STABLE - elements with equal values maintain their
+ *   relative order from the input array. Stability is achieved by traversing
+ *   the input array from RIGHT to LEFT in the output phase.
+ * 
+ * WHY TRAVERSE RIGHT TO LEFT?
+ *   - Cumulative counts give the ENDING position for each value
+ *   - Processing right-to-left and decrementing ensures that earlier
+ *     occurrences get placed before later ones in the output
+ *   - This preserves the original relative order (stability)
+ * 
+ * CONSTRAINTS:
+ *   - Works only with non-negative integers (or values that can be mapped to them)
+ *   - Efficient only when k is not significantly larger than n
+ *   - If k >> n, consider Radix Sort or comparison-based sorts
+ * 
+ * APPLICATIONS:
+ *   - Radix Sort (as a stable subroutine)
+ *   - Sorting characters in strings
+ *   - Sorting integers with known, limited range
+ *   - Data with discrete categories or small integer keys
+ * 
+ * =============================================================================
  */
 
 export class CountingSortSolver {

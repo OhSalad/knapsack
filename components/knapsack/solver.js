@@ -1,3 +1,50 @@
+/**
+ * =============================================================================
+ * 0/1 KNAPSACK PROBLEM - DYNAMIC PROGRAMMING SOLUTION
+ * =============================================================================
+ * 
+ * PROBLEM DESCRIPTION:
+ * Given a set of items, each with a weight and a value, determine the maximum
+ * value that can be obtained by selecting items such that their total weight
+ * does not exceed a given capacity. Each item can only be taken once (0/1).
+ * 
+ * ALGORITHM APPROACH:
+ * This implementation uses bottom-up Dynamic Programming (tabulation).
+ * We build a 2D table dp[i][w] where:
+ *   - i = number of items considered (0 to n)
+ *   - w = current capacity being evaluated (0 to W)
+ *   - dp[i][w] = maximum value achievable with first i items and capacity w
+ * 
+ * RECURRENCE RELATION:
+ *   dp[i][w] = max(
+ *       dp[i-1][w],                              // Exclude item i
+ *       dp[i-1][w-weight[i]] + value[i]          // Include item i (if weight[i] <= w)
+ *   )
+ * 
+ * BASE CASE:
+ *   dp[0][w] = 0 for all w (no items = no value)
+ *   dp[i][0] = 0 for all i (no capacity = no value)
+ * 
+ * TIME COMPLEXITY: O(n * W)
+ *   - Where n = number of items
+ *   - Where W = knapsack capacity
+ *   - We fill each cell of the (n+1) × (W+1) table exactly once
+ * 
+ * SPACE COMPLEXITY: O(n * W)
+ *   - For the 2D DP table of size (n+1) × (W+1)
+ *   - Can be optimized to O(W) using rolling array technique
+ * 
+ * OPTIMAL SUBSTRUCTURE:
+ *   The optimal solution for n items can be constructed from optimal
+ *   solutions for fewer items (either including or excluding the nth item).
+ * 
+ * OVERLAPPING SUBPROBLEMS:
+ *   The same subproblems dp[i][w] are computed multiple times in the
+ *   naive recursive approach, justifying the use of dynamic programming.
+ * 
+ * =============================================================================
+ */
+
 export class KnapsackSolver {
     constructor(capacity, weights, values) {
         this.capacity = capacity;

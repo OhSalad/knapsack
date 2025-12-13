@@ -32,6 +32,7 @@
             <button class="tab-btn" data-algo="lcs">LCS</button>
             <button class="tab-btn" data-algo="heap">Heap</button>
             <button class="tab-btn" data-algo="countingsort">Counting Sort</button>
+            <button class="tab-btn" data-algo="strassen">Strassen</button>
         </div>
 
         <!-- Configuration Card -->
@@ -154,6 +155,38 @@
                 </div>
             </div>
 
+            <div class="config-content hidden" id="strassen-config">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Matrix Size (2, 4, or 8)</label>
+                        <select id="strassen-size-input">
+                            <option value="2" selected>2×2</option>
+                            <option value="4">4×4</option>
+                            <option value="8">8×8</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Max Value (1-9)</label>
+                        <input type="number" id="strassen-max-value" value="9" min="1" max="9">
+                    </div>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
+                    ⚡ Strassen's algorithm uses 7 multiplications instead of 8 per level, achieving O(n^2.807)
+                    complexity.
+                </p>
+                <div class="strassen-matrices-preview" id="strassen-preview">
+                    <div class="matrix-preview-container">
+                        <div class="matrix-preview" id="matrix-a-preview">
+                            <span class="preview-label">Matrix A</span>
+                        </div>
+                        <span class="preview-operator">×</span>
+                        <div class="matrix-preview" id="matrix-b-preview">
+                            <span class="preview-label">Matrix B</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="config-actions">
                 <button id="start-btn" class="primary-btn large">Start / Restart</button>
             </div>
@@ -231,7 +264,103 @@
                         <li class="cs-legend hidden"><span class="dot cs-update"></span> Count Update</li>
                         <li class="cs-legend hidden"><span class="dot cs-source"></span> Source Index</li>
                         <li class="cs-legend hidden"><span class="dot cs-target"></span> Output Position</li>
+                        <li class="strassen-legend hidden"><span class="dot strassen-divide"></span> Divide Phase</li>
+                        <li class="strassen-legend hidden"><span class="dot strassen-product"></span> Computing Product
+                        </li>
+                        <li class="strassen-legend hidden"><span class="dot strassen-combine"></span> Combine Phase</li>
                     </ul>
+                </section>
+
+                <!-- Algorithm Info Card -->
+                <section class="card algo-info-card">
+                    <h3 class="card-title">📊 Algorithm Info</h3>
+                    <div id="algo-info-content">
+                        <!-- Knapsack Info (default) -->
+                        <div class="algo-info knapsack-info">
+                            <div class="complexity-badges">
+                                <span class="complexity-badge time">⏱️ Time: O(n × W)</span>
+                                <span class="complexity-badge space">💾 Space: O(n × W)</span>
+                            </div>
+                            <div class="algo-description">
+                                <p><strong>0/1 Knapsack Problem</strong></p>
+                                <p>Find the maximum value subset of items that fits in a given capacity. Each item can
+                                    only be used once.</p>
+                                <details>
+                                    <summary>Recurrence Relation</summary>
+                                    <code>dp[i][w] = max(dp[i-1][w], dp[i-1][w-wt[i]] + val[i])</code>
+                                </details>
+                            </div>
+                        </div>
+
+                        <!-- LCS Info -->
+                        <div class="algo-info lcs-info hidden">
+                            <div class="complexity-badges">
+                                <span class="complexity-badge time">⏱️ Time: O(m × n)</span>
+                                <span class="complexity-badge space">💾 Space: O(m × n)</span>
+                            </div>
+                            <div class="algo-description">
+                                <p><strong>Longest Common Subsequence</strong></p>
+                                <p>Find the longest subsequence common to two strings. Used in diff tools and DNA
+                                    analysis.</p>
+                                <details>
+                                    <summary>Recurrence Relation</summary>
+                                    <code>If X[i] == Y[j]: dp[i][j] = dp[i-1][j-1] + 1<br>Else: dp[i][j] = max(dp[i-1][j], dp[i][j-1])</code>
+                                </details>
+                            </div>
+                        </div>
+
+                        <!-- Heap Info -->
+                        <div class="algo-info heap-info hidden">
+                            <div class="complexity-badges">
+                                <span class="complexity-badge time">⏱️ Build: O(n)</span>
+                                <span class="complexity-badge time">⏱️ Insert/Extract: O(log n)</span>
+                                <span class="complexity-badge space">💾 Space: O(1)</span>
+                            </div>
+                            <div class="algo-description">
+                                <p><strong>Max-Heap Operations</strong></p>
+                                <p>Complete binary tree where parent ≥ children. Used for priority queues and heap sort.
+                                </p>
+                                <details>
+                                    <summary>Key Properties</summary>
+                                    <code>Parent: ⌊(i-1)/2⌋<br>Left: 2i+1<br>Right: 2i+2</code>
+                                </details>
+                            </div>
+                        </div>
+
+                        <!-- Counting Sort Info -->
+                        <div class="algo-info cs-info hidden">
+                            <div class="complexity-badges">
+                                <span class="complexity-badge time">⏱️ Time: O(n + k)</span>
+                                <span class="complexity-badge space">💾 Space: O(n + k)</span>
+                            </div>
+                            <div class="algo-description">
+                                <p><strong>Counting Sort</strong></p>
+                                <p>Non-comparison sort using counting. Stable and efficient when k (range) is small.
+                                    Beats O(n log n) sorts!</p>
+                                <details>
+                                    <summary>Algorithm Phases</summary>
+                                    <code>1. Count occurrences<br>2. Cumulative sum<br>3. Place elements (R→L)</code>
+                                </details>
+                            </div>
+                        </div>
+
+                        <!-- Strassen Info -->
+                        <div class="algo-info strassen-info hidden">
+                            <div class="complexity-badges">
+                                <span class="complexity-badge time">⏱️ Time: O(n^2.807)</span>
+                                <span class="complexity-badge space">💾 Space: O(n² log n)</span>
+                            </div>
+                            <div class="algo-description">
+                                <p><strong>Strassen's Matrix Multiplication</strong></p>
+                                <p>Divide-and-conquer algorithm using 7 multiplications instead of 8 per recursion
+                                    level.</p>
+                                <details>
+                                    <summary>7 Strassen Products</summary>
+                                    <code>M1 = (A11+A22)×(B11+B22)<br>M2 = (A21+A22)×B11<br>M3 = A11×(B12-B22)<br>M4 = A22×(B21-B11)<br>M5 = (A11+A12)×B22<br>M6 = (A21-A11)×(B11+B12)<br>M7 = (A12-A22)×(B21+B22)</code>
+                                </details>
+                            </div>
+                        </div>
+                    </div>
                 </section>
             </div>
 

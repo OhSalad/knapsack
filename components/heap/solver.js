@@ -1,3 +1,114 @@
+/**
+ * =============================================================================
+ * MAX-HEAP DATA STRUCTURE & OPERATIONS
+ * =============================================================================
+ * 
+ * DATA STRUCTURE DESCRIPTION:
+ * A Max-Heap is a complete binary tree where each parent node is greater than
+ * or equal to its children. The maximum element is always at the root.
+ * 
+ * ARRAY REPRESENTATION:
+ * Heaps are efficiently stored in arrays where for a node at index i:
+ *   - Parent index:      floor((i - 1) / 2)
+ *   - Left child index:  2 * i + 1
+ *   - Right child index: 2 * i + 2
+ * 
+ * HEAP PROPERTY:
+ *   For every node i (except root): array[parent(i)] >= array[i]
+ * 
+ * =============================================================================
+ * OPERATION 1: BUILD-MAX-HEAP
+ * =============================================================================
+ * 
+ * ALGORITHM:
+ * Convert an unordered array into a valid max-heap by calling heapify on all
+ * non-leaf nodes from the bottom-up (right to left, starting from the last
+ * non-leaf node at index floor(n/2) - 1).
+ * 
+ * TIME COMPLEXITY: O(n)
+ *   - Although we call heapify O(n/2) times and each heapify is O(log n),
+ *     the total work is actually O(n) due to the heights of nodes.
+ *   - Most nodes are near the bottom where heapify does O(1) work.
+ *   - Mathematical proof: Σ (n/2^(h+1)) * O(h) = O(n)
+ * 
+ * SPACE COMPLEXITY: O(1)
+ *   - In-place algorithm, only uses constant extra space
+ *   - Recursion stack depth is O(log n) for heapify calls
+ * 
+ * =============================================================================
+ * OPERATION 2: HEAPIFY (MAX-HEAPIFY)
+ * =============================================================================
+ * 
+ * ALGORITHM:
+ * Given a node index i where left and right subtrees are already heaps,
+ * fix the heap property at node i by "sinking" it down to its correct position.
+ * 
+ * STEPS:
+ * 1. Compare node with its left and right children
+ * 2. If largest child is greater than node, swap them
+ * 3. Recursively heapify the affected subtree
+ * 
+ * TIME COMPLEXITY: O(log n)
+ *   - At most traverses the height of the tree
+ *   - Height of complete binary tree = floor(log₂ n)
+ * 
+ * SPACE COMPLEXITY: O(log n)
+ *   - Recursive call stack depth equals tree height
+ *   - Can be O(1) with iterative implementation
+ * 
+ * =============================================================================
+ * OPERATION 3: EXTRACT-MAX
+ * =============================================================================
+ * 
+ * ALGORITHM:
+ * Remove and return the maximum element (root) from the heap.
+ * 
+ * STEPS:
+ * 1. Store the root value (maximum)
+ * 2. Move the last element to the root position
+ * 3. Remove the last element (reduce heap size)
+ * 4. Heapify-down from the root to restore heap property
+ * 
+ * TIME COMPLEXITY: O(log n)
+ *   - Heapify-down operation takes O(log n)
+ *   - All other operations are O(1)
+ * 
+ * SPACE COMPLEXITY: O(log n)
+ *   - Due to recursive heapify call stack
+ *   - Can be O(1) with iterative heapify
+ * 
+ * =============================================================================
+ * OPERATION 4: INSERT (HEAP-INSERT)
+ * =============================================================================
+ * 
+ * ALGORITHM:
+ * Add a new element to the heap while maintaining the heap property.
+ * 
+ * STEPS:
+ * 1. Add the new element at the end of the array (last position)
+ * 2. "Bubble up" the element by comparing with parent and swapping if larger
+ * 3. Continue until heap property is satisfied or root is reached
+ * 
+ * TIME COMPLEXITY: O(log n)
+ *   - Bubble-up traverses at most the height of the tree
+ *   - Height = floor(log₂ n)
+ * 
+ * SPACE COMPLEXITY: O(log n)
+ *   - Due to recursive bubble-up call stack
+ *   - Can be O(1) with iterative implementation
+ * 
+ * =============================================================================
+ * APPLICATIONS:
+ *   - Priority Queues (task scheduling, event-driven simulation)
+ *   - Heap Sort algorithm O(n log n)
+ *   - Finding k largest/smallest elements
+ *   - Dijkstra's shortest path algorithm
+ *   - Huffman coding (data compression)
+ *   - Median maintenance in streaming data
+ * 
+ * =============================================================================
+ */
+
 export class HeapSolver {
     constructor(array, operation = 'build') {
         this.originalArray = [...array];
@@ -28,7 +139,7 @@ export class HeapSolver {
 
     extractMax() {
         this._resetState();
-        
+
         // First build the max heap
         this.steps.push({
             type: 'pre-extract-build',
@@ -36,19 +147,19 @@ export class HeapSolver {
             description: `Building max-heap before extraction. Starting array: [${this.array.join(', ')}]`,
             stats: this._stats()
         });
-        
+
         const startIndex = Math.floor(this.array.length / 2) - 1;
         for (let i = startIndex; i >= 0; i--) {
             this._heapifyNode(i, this.array.length, 0);
         }
-        
+
         this.steps.push({
             type: 'pre-extract-complete',
             array: [...this.array],
             description: `✓ Max-heap built: [${this.array.join(', ')}]. Now extracting maximum.`,
             stats: this._stats()
         });
-        
+
         if (this.array.length === 0) {
             this.steps.push({
                 type: 'error',
@@ -105,7 +216,7 @@ export class HeapSolver {
 
     insertElement(value) {
         this._resetState();
-        
+
         // First build the max heap
         this.steps.push({
             type: 'pre-insert-build',
@@ -113,19 +224,19 @@ export class HeapSolver {
             description: `Building max-heap before insertion. Starting array: [${this.array.join(', ')}]`,
             stats: this._stats()
         });
-        
+
         const startIndex = Math.floor(this.array.length / 2) - 1;
         for (let i = startIndex; i >= 0; i--) {
             this._heapifyNode(i, this.array.length, 0);
         }
-        
+
         this.steps.push({
             type: 'pre-insert-complete',
             array: [...this.array],
             description: `✓ Max-heap built: [${this.array.join(', ')}]. Now inserting ${value}.`,
             stats: this._stats()
         });
-        
+
         this.steps.push({
             type: 'insert-init',
             array: [...this.array],
@@ -171,7 +282,7 @@ export class HeapSolver {
         }
 
         const parentIndex = Math.floor((index - 1) / 2);
-        
+
         this.steps.push({
             type: 'bubble-compare',
             index: index,

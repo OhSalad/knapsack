@@ -2,8 +2,10 @@ import { KnapsackSolver, generateRandomKnapsack } from '../components/knapsack/s
 import { LCSSolver, generateRandomLCS } from '../components/lcs/solver.js';
 import { HeapSolver, generateRandomHeapArray } from '../components/heap/solver.js';
 import { CountingSortSolver, generateRandomCountingSortArray } from '../components/countingsort/solver.js';
+import { StrassenSolver, generateRandomMatrices } from '../components/strassen/solver.js';
 import { HeapVisualizer } from '../components/heap/visualizer.js';
 import { CountingSortVisualizer } from '../components/countingsort/visualizer.js';
+import { StrassenVisualizer } from '../components/strassen/visualizer.js';
 import { CountingSortMonkMode } from '../components/countingsort/monkMode.js';
 import { HeapMonkMode } from '../components/heap/monkMode.js';
 import { HeapBuilder } from '../components/heap/builder.js';
@@ -25,7 +27,8 @@ const DEFAULT_STATE = {
     isHeapBuilderActive: false,
     heapOperation: 'build',
     hasCustomHeap: false,
-    countingSortData: null
+    countingSortData: null,
+    strassenData: null
 };
 
 export class AppController {
@@ -40,6 +43,7 @@ export class AppController {
         this.heapBuilder = null;
         this.countingSortVisualizer = null;
         this.countingSortMonkMode = null;
+        this.strassenVisualizer = null;
     }
 
     init() {
@@ -97,7 +101,13 @@ export class AppController {
             newNodeVal: document.getElementById('new-node-val'),
             heapOpBtns: document.querySelectorAll('.heap-op-btn'),
             insertValueContainer: document.getElementById('insert-value-container'),
-            insertValueInput: document.getElementById('insert-value-input')
+            insertValueInput: document.getElementById('insert-value-input'),
+            strassenConfig: document.getElementById('strassen-config'),
+            inputStrassenSize: document.getElementById('strassen-size-input'),
+            inputStrassenMaxValue: document.getElementById('strassen-max-value'),
+            strassenPreview: document.getElementById('strassen-preview'),
+            matrixAPreview: document.getElementById('matrix-a-preview'),
+            matrixBPreview: document.getElementById('matrix-b-preview')
         };
     }
 
@@ -117,6 +127,7 @@ export class AppController {
             if (this.state.algo === 'knapsack') this._renderItemsPreview();
             if (this.state.algo === 'heap') this._renderHeapArrayPreview();
             if (this.state.algo === 'countingsort') this._renderCountingSortArrayPreview();
+            if (this.state.algo === 'strassen') this._renderStrassenPreview();
             this._resetSimulationState();
             this._resetHeapStats();
             this.visualizer.resetVisuals();
@@ -170,6 +181,7 @@ export class AppController {
             this.tracebackManager.setSpeed(val);
             this.heapVisualizer?.setSpeed(val);
             this.countingSortVisualizer?.setSpeed(val);
+            this.strassenVisualizer?.setSpeed(val);
         });
     }
 
@@ -179,6 +191,7 @@ export class AppController {
                 e.preventDefault();
                 if (this.state.algo === 'heap') this._toggleHeapPlay();
                 else if (this.state.algo === 'countingsort') this._toggleCountingSortPlay();
+                else if (this.state.algo === 'strassen') this._toggleStrassenPlay();
                 else this._toggleDpPlay();
             }
             if (e.code === 'ArrowRight') this._stepForward();
@@ -248,12 +261,26 @@ export class AppController {
         this.els.lcsConfig.classList.add('hidden');
         this.els.heapConfig.classList.add('hidden');
         this.els.countingSortConfig?.classList.add('hidden');
+        this.els.strassenConfig?.classList.add('hidden');
         const heapLegendItems = document.querySelectorAll('.heap-legend');
         const csLegendItems = document.querySelectorAll('.cs-legend');
-        const dpLegendItems = document.querySelectorAll('#legend-list > li:not(.heap-legend):not(.cs-legend)');
+        const strassenLegendItems = document.querySelectorAll('.strassen-legend');
+        const dpLegendItems = document.querySelectorAll('#legend-list > li:not(.heap-legend):not(.cs-legend):not(.strassen-legend)');
+
+        // Algorithm info sections
+        const algoInfoSections = {
+            knapsack: document.querySelector('.knapsack-info'),
+            lcs: document.querySelector('.lcs-info'),
+            heap: document.querySelector('.heap-info'),
+            countingsort: document.querySelector('.cs-info'),
+            strassen: document.querySelector('.strassen-info')
+        };
+
+        // Hide all algorithm info sections first
+        Object.values(algoInfoSections).forEach(section => section?.classList.add('hidden'));
 
         // Reset viz-card modes
-        this.els.vizCard.classList.remove('heap-mode', 'countingsort-mode');
+        this.els.vizCard.classList.remove('heap-mode', 'countingsort-mode', 'strassen-mode');
 
         if (this.state.algo === 'knapsack') {
             this.els.knapsackConfig.classList.remove('hidden');
@@ -261,33 +288,52 @@ export class AppController {
             this._renderItemsPreview();
             heapLegendItems.forEach(li => li.classList.add('hidden'));
             csLegendItems.forEach(li => li.classList.add('hidden'));
+            strassenLegendItems.forEach(li => li.classList.add('hidden'));
             dpLegendItems.forEach(li => li.classList.remove('hidden'));
             this.els.tracebackBtn.classList.remove('hidden');
+            algoInfoSections.knapsack?.classList.remove('hidden');
         } else if (this.state.algo === 'lcs') {
             this.els.lcsConfig.classList.remove('hidden');
             this.els.gridTitle.textContent = 'LCS Table';
             heapLegendItems.forEach(li => li.classList.add('hidden'));
             csLegendItems.forEach(li => li.classList.add('hidden'));
+            strassenLegendItems.forEach(li => li.classList.add('hidden'));
             dpLegendItems.forEach(li => li.classList.remove('hidden'));
             this.els.tracebackBtn.classList.remove('hidden');
+            algoInfoSections.lcs?.classList.remove('hidden');
         } else if (this.state.algo === 'heap') {
             this.els.heapConfig.classList.remove('hidden');
             this.els.gridTitle.textContent = 'Heap Visualization';
             this.els.vizCard.classList.add('heap-mode');
             heapLegendItems.forEach(li => li.classList.remove('hidden'));
             csLegendItems.forEach(li => li.classList.add('hidden'));
+            strassenLegendItems.forEach(li => li.classList.add('hidden'));
             dpLegendItems.forEach(li => li.classList.add('hidden'));
             this.els.tracebackBtn.classList.add('hidden');
             this._renderHeapArrayPreview();
+            algoInfoSections.heap?.classList.remove('hidden');
         } else if (this.state.algo === 'countingsort') {
             this.els.countingSortConfig.classList.remove('hidden');
             this.els.gridTitle.textContent = 'Counting Sort Visualization';
             this.els.vizCard.classList.add('countingsort-mode');
             heapLegendItems.forEach(li => li.classList.add('hidden'));
             csLegendItems.forEach(li => li.classList.remove('hidden'));
+            strassenLegendItems.forEach(li => li.classList.add('hidden'));
             dpLegendItems.forEach(li => li.classList.add('hidden'));
             this.els.tracebackBtn.classList.add('hidden');
             this._renderCountingSortArrayPreview();
+            algoInfoSections.countingsort?.classList.remove('hidden');
+        } else if (this.state.algo === 'strassen') {
+            this.els.strassenConfig.classList.remove('hidden');
+            this.els.gridTitle.textContent = 'Strassen Matrix Multiplication';
+            this.els.vizCard.classList.add('strassen-mode');
+            heapLegendItems.forEach(li => li.classList.add('hidden'));
+            csLegendItems.forEach(li => li.classList.add('hidden'));
+            strassenLegendItems.forEach(li => li.classList.remove('hidden'));
+            dpLegendItems.forEach(li => li.classList.add('hidden'));
+            this.els.tracebackBtn.classList.add('hidden');
+            this._renderStrassenPreview();
+            algoInfoSections.strassen?.classList.remove('hidden');
         }
     }
 
@@ -295,7 +341,7 @@ export class AppController {
     _runSimulation() {
         const inputData = this._getDataFromInputs();
         this._resetSimulationState();
-        if (this.state.algo !== 'heap' && this.state.algo !== 'countingsort') {
+        if (this.state.algo !== 'heap' && this.state.algo !== 'countingsort' && this.state.algo !== 'strassen') {
             this.els.tracebackBtn.disabled = true;
             this.tracebackManager.stopTraceback();
         }
@@ -305,6 +351,10 @@ export class AppController {
         }
         if (this.state.algo === 'countingsort') {
             this._runCountingSortSimulation(inputData);
+            return;
+        }
+        if (this.state.algo === 'strassen') {
+            this._runStrassenSimulation(inputData);
             return;
         }
         if (this.state.mode === 'monk') {
@@ -448,6 +498,22 @@ export class AppController {
         }
     }
 
+    _runStrassenSimulation(data) {
+        if (!this.strassenVisualizer) {
+            this.strassenVisualizer = new StrassenVisualizer('grid-container', 'status-text');
+        }
+
+        const solver = new StrassenSolver(data.matrixA, data.matrixB);
+        const result = solver.solve();
+
+        this.strassenVisualizer.init(result.steps, data.matrixA, data.matrixB);
+        this.strassenVisualizer.setSpeed(parseInt(this.els.speedRange.value, 10));
+        this.els.cellCountLabel.textContent = `${data.size}×${data.size}`;
+        this.state.isSimulationComplete = true;
+
+        this._updateStatus(`Ready. Press Play to visualize Strassen's algorithm. Total steps: ${result.steps.length}`);
+    }
+
     _startTraceback() {
         if (!this.state.lastSolvedDp || !this.state.lastAlgoData) {
             this._updateStatus('Please complete the simulation first before tracing back.');
@@ -495,6 +561,12 @@ export class AppController {
             if (this.els.inputCsSize) this.els.inputCsSize.value = size;
             if (this.els.inputCsMaxValue) this.els.inputCsMaxValue.value = maxValue;
             this._renderCountingSortArrayPreview();
+        } else if (this.state.algo === 'strassen') {
+            let size = parseInt(this.els.inputStrassenSize?.value, 10) || 2;
+            let maxValue = parseInt(this.els.inputStrassenMaxValue?.value, 10) || 9;
+            const data = generateRandomMatrices(size, maxValue);
+            this.state.strassenData = data;
+            this._renderStrassenPreview();
         }
     }
 
@@ -523,6 +595,17 @@ export class AppController {
             this.state.countingSortData = array;
             this._renderCountingSortArrayPreview();
             return array;
+        }
+        if (this.state.algo === 'strassen') {
+            let size = parseInt(this.els.inputStrassenSize?.value, 10) || 2;
+            let maxValue = parseInt(this.els.inputStrassenMaxValue?.value, 10) || 9;
+            if (this.state.strassenData && this.state.strassenData.size === size) {
+                return this.state.strassenData;
+            }
+            const data = generateRandomMatrices(size, maxValue);
+            this.state.strassenData = data;
+            this._renderStrassenPreview();
+            return data;
         }
         // If we have custom heap data, always use it
         if (this.state.hasCustomHeap && this.state.heapData) {
@@ -586,6 +669,39 @@ export class AppController {
         });
     }
 
+    _renderStrassenPreview() {
+        if (!this.state.strassenData || !this.els.matrixAPreview || !this.els.matrixBPreview) return;
+
+        const { matrixA, matrixB } = this.state.strassenData;
+
+        // Render Matrix A
+        this.els.matrixAPreview.innerHTML = '<span class="preview-label">Matrix A</span>';
+        const gridA = this._createMatrixPreviewGrid(matrixA);
+        this.els.matrixAPreview.appendChild(gridA);
+
+        // Render Matrix B
+        this.els.matrixBPreview.innerHTML = '<span class="preview-label">Matrix B</span>';
+        const gridB = this._createMatrixPreviewGrid(matrixB);
+        this.els.matrixBPreview.appendChild(gridB);
+    }
+
+    _createMatrixPreviewGrid(matrix) {
+        const grid = document.createElement('div');
+        grid.className = 'matrix-preview-grid';
+        grid.style.gridTemplateColumns = `repeat(${matrix.length}, 1fr)`;
+
+        matrix.forEach(row => {
+            row.forEach(val => {
+                const cell = document.createElement('div');
+                cell.className = 'matrix-preview-cell';
+                cell.textContent = val;
+                grid.appendChild(cell);
+            });
+        });
+
+        return grid;
+    }
+
     _resetHeapStats() {
         const heapifyEl = document.getElementById('heapify-count');
         const swapEl = document.getElementById('swap-count');
@@ -613,24 +729,28 @@ export class AppController {
     _play() {
         if (this.state.algo === 'heap' && this.heapVisualizer) this.heapVisualizer.play();
         else if (this.state.algo === 'countingsort' && this.countingSortVisualizer) this.countingSortVisualizer.play();
+        else if (this.state.algo === 'strassen' && this.strassenVisualizer) this.strassenVisualizer.play();
         else this.visualizer.play();
     }
 
     _pause() {
         if (this.state.algo === 'heap' && this.heapVisualizer) this.heapVisualizer.pause();
         else if (this.state.algo === 'countingsort' && this.countingSortVisualizer) this.countingSortVisualizer.pause();
+        else if (this.state.algo === 'strassen' && this.strassenVisualizer) this.strassenVisualizer.pause();
         else this.visualizer.pause();
     }
 
     _stepForward() {
         if (this.state.algo === 'heap' && this.heapVisualizer) this.heapVisualizer.next();
         else if (this.state.algo === 'countingsort' && this.countingSortVisualizer) this.countingSortVisualizer.next();
+        else if (this.state.algo === 'strassen' && this.strassenVisualizer) this.strassenVisualizer.stepForward();
         else this.visualizer.next();
     }
 
     _stepBackward() {
         if (this.state.algo === 'heap' && this.heapVisualizer) this.heapVisualizer.prev();
         else if (this.state.algo === 'countingsort' && this.countingSortVisualizer) this.countingSortVisualizer.prev();
+        else if (this.state.algo === 'strassen' && this.strassenVisualizer) this.strassenVisualizer.stepBackward();
         else this.visualizer.prev();
     }
 
@@ -649,6 +769,12 @@ export class AppController {
         if (!this.countingSortVisualizer) return;
         if (this.countingSortVisualizer.isPlaying) this.countingSortVisualizer.pause();
         else this.countingSortVisualizer.play();
+    }
+
+    _toggleStrassenPlay() {
+        if (!this.strassenVisualizer) return;
+        if (this.strassenVisualizer.isPlaying) this.strassenVisualizer.pause();
+        else this.strassenVisualizer.play();
     }
 
     _toggleHeapBuilder() {
